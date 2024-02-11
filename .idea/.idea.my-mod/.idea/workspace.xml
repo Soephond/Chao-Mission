@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0212c64b-584b-4291-8ad0-7d94bf882efd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ChaoMission/AnimationFile.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/AnimationFile.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/ChaoMission.vcxproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/FunctionHook.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/GameObject.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/GameObject.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/LandTableInfo.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/LandTableInfo.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/MemAccess.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/ModelInfo.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/ModelInfo.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/SA2Enums.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/SA2Functions.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/SA2ModInfo.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/SA2ModLoader.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/SA2Structs.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/SA2Variables.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/Trampoline.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/Trampoline.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/UsercallFunctionHandler.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/dllmain.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/framework.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/magic.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/main.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/my-mod.vcxproj.filters" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/ninja.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/njdef.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/pch.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ChaoMission/pch.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Release/ChaoMission.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Example Mod Folder/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Example Mod Folder/mod.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Example Mod Folder/my-mod.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Release/my-mod.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Release/my-mod.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod.sln" beforeDir="false" afterPath="$PROJECT_DIR$/ChaoMission.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/AnimationFile.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/AnimationFile.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/FunctionHook.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/GameObject.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/GameObject.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/LandTableInfo.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/LandTableInfo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/MemAccess.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/ModelInfo.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/ModelInfo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/SA2Enums.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/SA2Functions.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/SA2ModInfo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/SA2ModLoader.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/SA2Structs.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/SA2Variables.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/Trampoline.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/Trampoline.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/UsercallFunctionHandler.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/dllmain.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/framework.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/magic.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/my-mod.vcxproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/my-mod.vcxproj.filters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/my-mod.vcxproj.user" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/ninja.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/njdef.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/pch.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-mod/pch.h" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/ChaoMission/FunctionHook.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ChaoMission/GameObject.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ChaoMission/MemAccess.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ChaoMission/SA2Functions.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ChaoMission/SA2Variables.h" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="Toolset" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2bab7lMMm6sd7koS9Y97mBVwBHN" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\Soephond\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
+      "C:\\Users\\Soephond\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
+      "C:\\Users\\Soephond\\AppData\\Local\\Symbols\\src"
+    ]
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0212c64b-584b-4291-8ad0-7d94bf882efd" name="Changes" comment="" />
+      <created>1706455973864</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1706455973864</updated>
+      <workItem from="1706455976459" duration="273000" />
+      <workItem from="1706456267815" duration="583000" />
+      <workItem from="1706456883934" duration="4481000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>
