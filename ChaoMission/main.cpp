@@ -150,7 +150,6 @@ DataArray(Al_MSGWarnKinderMessageThing, Al_MSGWarnKinderMessageArray, 0x1A259E8,
 DataPointer(AL_MSGWarnData, SomeAL_MSGWarn, 0x1A276D8);
 DataPointer(ODE_MENU_MASTER_WORK*, AL_OdekakeMenuMaster_Data_ptr, 0x1AED324);
 
-
 FunctionPointer(void, LargeTitleBarExecutor_Load, (int a1, float a2, float a3), 0x5ABD30);
 FunctionPointer(void, sub_5ACBB0, (float a1, float a2), 0x5ACBB0);
 FastcallFunctionPointer(void, AL_OdeMenuSetMode, (int t, int mode), 0x57E6D0);
@@ -165,7 +164,7 @@ FunctionPointer(void, sub_57EE80, (float a1, float a2, float a3), 0x57EE80);
 FunctionPointer(KinderCoMessageThing *, sub_543830, (), 0x543830);
 VoidFunc(sub_5437B0, 0x5437B0);
 VoidFunc(sub_52FB80, 0x52FB80);
-FunctionPointer(void, AlMsgWinAddLineC, (int* a1, KinderCoMessageThing* a2, signed int a3), 0x579E30);
+FunctionPointer(void, AlMsgWinAddLineC, (KinderCoMessageThing* a2, const char* a1, bool a3), 0x579E30);
 FastcallFunctionPointer(ChaoData*, AL_GBAManagerGetChaoData, (), 0x532D00);
 FunctionPointer(int, sub_52B5B0, (int a1), 0x52B5B0);
 FunctionPointer(ODE_MENU_MASTER_WORK *, AL_OdeMenuChangeStage, (), 0x57E680);
@@ -202,7 +201,8 @@ extern "C" {
                 LargeTitleBarExecutor_Load(AL_OdekakeMenuMaster_Data_ptr->CurrStage, 650.0, 66.0);
                 AlMsgWarnCreate(80.0, 120.0, 480.0, 96.0);
                 AlMsgWarnOpen();
-                AlMsgWarnAddLineC(0);
+                AlMsgWarnAddLineC(45);
+                //AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Hallo", TextLanguage == 0);
                 sub_543860();
                 //ChaoParamWindowExecutor_Load(160.0, 248.0);
                 //sub_5ACBB0(480.0, 248.0);
