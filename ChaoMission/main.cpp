@@ -527,16 +527,16 @@ extern "C" {
 		int eggSalePrice = CategoryAttribs[9].attrib[chaoInfo->EggColor + 0x10].SalePrice;
 		float specialChaoMult = chaoInfo->Type > 0x13 && chaoInfo->Reincarnations >= 2 ? 1.5f : 1;
 		float randomMult = ((rand() % 20) + 90) / 100.0f; //Get a random number between 90 and 110 and divide by 100 to get a float between 0.9 and 1.1
-		int happinessMult = (chaoInfo->Happiness / 600) + 1;
+		float happinessMult = (chaoInfo->Happiness / 600) + 1;
 		int ageExtra = ((1000 * chaoInfo->Lifespan) / chaoInfo->Lifespan2) + (chaoInfo->Reincarnations * sqrt(0.87) * 800);
-		float gradeSqrt = 0.0f;
+		float gradeSqrt = 1.0f;
 		int totalLevels = 0;
 		int levelExtra = 0;
 		int total = 0;
 
 		for (int i = 0; i < 5; i++)
 		{
-			gradeSqrt *= sqrt((chaoInfo->StatGrades[i] * 0.48f) + 0.6f);
+			gradeSqrt *= (chaoInfo->StatGrades[i] * 0.48f) + 0.6f;
 			totalLevels += chaoInfo->StatLevels[i];
 		}
 
@@ -546,7 +546,7 @@ extern "C" {
 
 		if (chaoInfo->Reincarnations == 0 && chaoInfo->Type == ChaoType_Child)
 		{
-			total *= .10;
+			total *= .06;
 		}
 
 		return total;
