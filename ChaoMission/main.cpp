@@ -7,6 +7,7 @@
 #include "Windows.h"
 
 #include "FunctionHook.h"
+#include "cwe_api.h"
 
 using namespace std;
 
@@ -163,17 +164,17 @@ struct RingDisplayData
 };
 #pragma pack(pop)
 
-#pragma pack(push, 8)
-struct __declspec(align(4)) BlackMarketItemAttributes
-{
-	int PurchasePrice;
-	int SalePrice;
-	__int16 RequiredEmblems;
-	__int16 Name;
-	__int16 Descriptions;
-	__int16 Unknown;
-};
-#pragma pack(pop)
+//#pragma pack(push, 8)
+//struct __declspec(align(4)) BlackMarketItemAttributes
+//{
+//	int PurchasePrice;
+//	int SalePrice;
+//	__int16 RequiredEmblems;
+//	__int16 Name;
+//	__int16 Descriptions;
+//	__int16 Unknown;
+//};
+//#pragma pack(pop)
 
 
 struct BlackMarketCategoryAttribute
@@ -181,8 +182,6 @@ struct BlackMarketCategoryAttribute
 	BlackMarketItemAttributes* attrib;
 	int Count;
 };
-
-
 
 char ChaoNameDecoder[256]
 {
@@ -491,7 +490,9 @@ FunctionPointer(int, sub_52B5B0, (int a1), 0x52B5B0);
 FunctionPointer(ODE_MENU_MASTER_WORK*, AL_OdeMenuChangeStage, (), 0x57E680);
 FastcallFunctionPointer(signed int, ScreenFade2, (char a1, unsigned __int8 a2, unsigned __int8 a3, unsigned __int8 a4), 0x478790);
 
-bool FirstGoodbye = true;
+const HelperFunctions* HelperFunctionsGlobal;
+NJS_TEXNAME AL_ODE_GUEST_TEXNAME[1];
+NJS_TEXLIST AL_ODE_GUEST_TEXLIST[] = { AL_ODE_GUEST_TEXNAME, 1 };
 
 extern "C" {
 
@@ -521,14 +522,29 @@ extern "C" {
 		}
 	}
 
+	//void __usercall LoadChaoTexlist(char* a2@<ebx>, NJS_TEXLIST* texlist, unsigned __int16 a1@<ax>)
+	const int sub_530280 = 0x530280;
+	void LoadChaoTexlist(const char* a2, NJS_TEXLIST* texlist, unsigned __int16 a1)
+	{
+		__asm
+		{
+			mov ax, [a1]
+			mov ebx, [a2]
+			push[texlist]
+			call sub_530280
+			add esp, 4
+		}
+	}
+
+
 	int CalculateReward(ChaoData* chao)
 	{
 		ChaoDataBase* chaoInfo = &chao->data;
-		int eggSalePrice = CategoryAttribs[9].attrib[chaoInfo->EggColor + 0x10].SalePrice;
-		float specialChaoMult = chaoInfo->Type > 0x13 && chaoInfo->Reincarnations >= 2 ? 1.5f : 1;
+		int eggSalePrice = CategoryAttribs[9].attrib[chaoInfo->EggColor + 0x10].SalePrice / 2;
+		float specialChaoMult = chaoInfo->Type > 0x13 && chaoInfo->Reincarnations >= 2 ? 2.0f : 1.0f;
 		float randomMult = ((rand() % 20) + 90) / 100.0f; //Get a random number between 90 and 110 and divide by 100 to get a float between 0.9 and 1.1
 		float happinessMult = (chaoInfo->Happiness / 600) + 1;
-		int ageExtra = ((1000 * chaoInfo->Lifespan) / chaoInfo->Lifespan2) + (chaoInfo->Reincarnations * sqrt(0.87) * 800);
+		int ageExtra = chaoInfo->Reincarnations * sqrt(0.87) * 800;
 		float gradeSqrt = 1.0f;
 		int totalLevels = 0;
 		int levelExtra = 0;
@@ -536,13 +552,23 @@ extern "C" {
 
 		for (int i = 0; i < 5; i++)
 		{
-			gradeSqrt *= (chaoInfo->StatGrades[i] * 0.48f) + 0.6f;
+			gradeSqrt *= (chaoInfo->StatGrades[i] * 0.048f) + 0.6f;
 			totalLevels += chaoInfo->StatLevels[i];
 		}
 
-		levelExtra = gradeSqrt * totalLevels * 25;
+		if (totalLevels == 0)
+		{
+			totalLevels = 1;
+		}
 
-		total = (eggSalePrice + ((levelExtra + ageExtra) * specialChaoMult )) * randomMult * happinessMult;
+		if (ageExtra == 0)
+		{
+			ageExtra = 1;
+		}
+
+		levelExtra = gradeSqrt * totalLevels * 35;
+
+		total = (eggSalePrice + ((levelExtra + ageExtra) * specialChaoMult)) * randomMult * happinessMult;
 
 		if (chaoInfo->Reincarnations == 0 && chaoInfo->Type == ChaoType_Child)
 		{
@@ -552,7 +578,7 @@ extern "C" {
 		return total;
 	}
 
-	void __fastcall Call_Goodbye_Menu_sub_5A6F50_(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
+	void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 	{
 		ODE_MENU_MASTER_WORK* v1; // edi
 		Uint32 press; // eax
@@ -564,6 +590,7 @@ extern "C" {
 		int v8; // eax
 		int reward = 100;
 		std::string rewardString;
+		float x = 1.0f;
 
 		v1 = AL_OdekakeMenuMaster_Data_ptr;
 		if (AL_OdekakeMenuMaster_Data_ptr)
@@ -581,7 +608,7 @@ extern "C" {
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Adoption.", TextLanguage == 0);
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Organization.", TextLanguage == 0);
 				sub_543860();
-				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "This is program is a initiative to send Chao to a new home where they can be happy.", TextLanguage == 0);
+				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "This is program is an initiative to send Chao to a new home where they can be happy.", TextLanguage == 0);
 				sub_543860();
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Once your Chao is accepted into the program, you won't be able reverse this.", TextLanguage == 0);
 				sub_52FB80();
@@ -711,11 +738,44 @@ extern "C" {
 					goto LABEL_51;
 				}
 				AlMsgWarnClear();
-				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Your Chao will be send to a home that has a lot of love for them.", TextLanguage == 0);
-				sub_543860();
-				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "They will always remember you.", TextLanguage == 0);
-				sub_543860();
-				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "They wave goodbye one last time with a smile on their face.", TextLanguage == 0);
+				DataOfChao = AL_GBAManagerGetChaoData();
+				if (DataOfChao->data.Happiness >= 85)
+				{
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "The chao leaps in your arms to say good-bye.", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "They cry in your arms but you can also make out a big smile that they have a new wonderful life ahead of them.", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "While they are walking away they keep on looking back, smiling and waving.", TextLanguage == 0);
+				}
+				else if (DataOfChao->data.Happiness <= -50)
+				{
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Your chao cries when they hear they go to a place where they are finally loved.", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "They don't look back.", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "---------------------", TextLanguage == 0);
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "YOU GOT A MESSAGE FROM C.H.A.O.:", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "'Please raise your chao's to be happier!", TextLanguage == 0);
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "I mean, we didn't expect much, but come on!'", TextLanguage == 0);
+				}
+				else if (DataOfChao->data.Happiness > -50 && DataOfChao->data.Happiness < 0)
+				{
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "The chao walks away to their new home.", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "The air is filled with a sense of contempt.", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "They look back one last time and you see an expression of relief on their face.", TextLanguage == 0);
+				}
+				else
+				{
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Your Chao will be send to a home that has a lot of love for them.", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "They will always remember you.", TextLanguage == 0);
+					sub_543860();
+					AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "They wave goodbye one last time with a smile on their face.", TextLanguage == 0);
+				}
+			
 				sub_52FB80();
 				AL_OdeMenuSetMode(0, 12);
 			case 0xC:
@@ -785,13 +845,57 @@ extern "C" {
 		}
 	}
 
+	void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
+	{
 
+	}
+
+	void __fastcall Handle_CHAO_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
+	{
+		Handle_Adoption_Screen(OdeMenuMasterWork);
+	}
+	
+	ChaoHudThingB GuestMenu[] = {
+		{1, 128, 32, 22.0f / 1024.0f, 297.0f / 1024.0f, 320.0f / 1024.0f, 364.0f / 1024.0f, AL_ODE_GUEST_TEXLIST, 0}, //text
+		{1, 128, 32, 136.0f / 256.0f, 0.01f, 1, 0.5f, AL_ODE_GUEST_TEXLIST, 0}, //grey text
+		{1, 40, 40, 410.0f/1024.0f, 36.0f/1024.0f, 562.0f/1024.0f, 188.0f/1024.0f, AL_ODE_GUEST_TEXLIST, 0}, //icon
+		{1, 40, 40, 1024.0f, 1024.0f, 1024.0f, 1024.0f, AL_ODE_GUEST_TEXLIST, 0}, //icon black and white
+	};
+
+	static CWE_API_ODEKAKE_ENTRY guestEntry = { Handle_Mission_Menu, nullptr, ODE_FLAGS_NONE, &GuestMenu[2],&GuestMenu[0],&GuestMenu[1],&GuestMenu[3],&GuestMenu[0], 1.0, 1.0, 0.5, 0.5 };
+
+	//registering data functions. - Needs to exist.
+	void (*RegisterDataFunc)(void* ptr);
+
+
+	//main CWE Load function -- Important stuff like adding your CWE mod goes here
+	void CWELoad(CWE_REGAPI* cwe_api, ObjectMaster* tp)
+	{
+		LoadChaoTexlist("ChaoHomeTexList", AL_ODE_GUEST_TEXLIST, 1);
+		if (HelperFunctionsGlobal->Mods->find("CWE")) //If CWE is loaded
+		{
+			Call_Goodbye_Menu_hk.Hook(Handle_Adoption_Screen);
+			cwe_api->AddOdekakeMenu(guestEntry);
+		}
+		else
+		{
+			Call_Goodbye_Menu_hk.Hook(Handle_CHAO_Menu);
+		}
+	}
 
 	// Optional.
 	// This function runs code one time when the game starts up. Great for loading assets and setting things up.
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
-		Call_Goodbye_Menu_hk.Hook(Call_Goodbye_Menu_sub_5A6F50_);
+		HelperFunctionsGlobal = &helperFunctions;
+
+		HMODULE h = GetModuleHandle(L"CWE");
+
+		std::string pathStr = std::string(path) + "\\";
+
+		RegisterDataFunc = (void (*)(void* ptr))GetProcAddress(h, "RegisterDataFunc");
+		RegisterDataFunc(CWELoad);
+
 	}
 
 	// Optional.
@@ -799,13 +903,6 @@ extern "C" {
 	// It is recommended to test for game state so that you only run code at a specific time.
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
-		if (AL_OdekakeMenuMaster_Data_ptr)
-		{
-			if (AL_OdekakeMenuMaster_Data_ptr->CurrStage != 5 && !FirstGoodbye)
-			{
-				FirstGoodbye = true;
-			}
-		}
 	}
 
 	// Optional.
@@ -819,7 +916,6 @@ extern "C" {
 	__declspec(dllexport) void __cdecl OnControl()
 	{
 	}
-
 
 
 	__declspec(dllexport) ModInfo SA2ModInfo = { ModLoaderVer }; // This is needed for the Mod Loader to recognize the DLL.

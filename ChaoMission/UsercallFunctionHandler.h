@@ -1,6 +1,7 @@
 #pragma once
 #include "MemAccess.h"
 #include <cassert>
+#define USERCALLDEBUG 0
 
 enum registers
 {
@@ -32,6 +33,41 @@ enum registers
 	rst0,
 	noret
 };
+
+static int regfamilies[] = {
+	rEAX,
+	rEBX,
+	rECX,
+	rEDX,
+	rESI,
+	rEDI,
+	rEBP,
+	rEAX,
+	rEBX,
+	rECX,
+	rEDX,
+	rESI,
+	rEDI,
+	rEBP,
+	rEAX,
+	rEBX,
+	rECX,
+	rEDX,
+	rEAX,
+	rEBX,
+	rECX,
+	rEDX,
+	stack1,
+	stack2,
+	stack4,
+	rst0,
+	noret
+};
+
+inline bool regsequal(int reg1, int reg2)
+{
+	return regfamilies[reg1] == regfamilies[reg2];
+}
 
 inline void writebytes(uint8_t* dst, int& dstoff, uint8_t a1, uint8_t a2)
 {
@@ -177,12 +213,14 @@ constexpr T const GenerateUsercallWrapper(int ret, intptr_t address, TArgs... ar
 	case rEBP:
 		memsz += 2;
 		break;
+	case rAX:
 	case rBX:
 	case rCX:
 	case rDX:
 	case rSI:
 	case rDI:
 	case rBP:
+	case rAL:
 	case rBL:
 	case rCL:
 	case rDL:
@@ -199,120 +237,135 @@ constexpr T const GenerateUsercallWrapper(int ret, intptr_t address, TArgs... ar
 	++memsz; // retn
 	auto codeData = AllocateCode(memsz);
 	int cdoff = 0;
-	uint8_t stackoff = 4;
+	uint8_t stackoff = argc * 4;
 	for (size_t i = 0; i < argc; ++i)
+	{
+		switch (argarray[i])
+		{
+		case rEBX:
+		case rBX:
+		case rBH:
+		case rBL:
+			codeData[cdoff++] = 0x53;
+			stackoff += 4;
+			break;
+		case rESI:
+		case rSI:
+			codeData[cdoff++] = 0x56;
+			stackoff += 4;
+			break;
+		case rEDI:
+		case rDI:
+			codeData[cdoff++] = 0x57;
+			stackoff += 4;
+			break;
+		case rEBP:
+		case rBP:
+			codeData[cdoff++] = 0x55;
+			stackoff += 4;
+			break;
+		}
+	}
+	for (int i = argc - 1; i >= 0; --i)
 	{
 		switch (argarray[i])
 		{
 		case rEAX:
 			writebytes(codeData, cdoff, 0x8B, 0x44, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rEBX:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x53, 0x8B, 0x5C, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x8B, 0x5C, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rECX:
 			writebytes(codeData, cdoff, 0x8B, 0x4C, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rEDX:
 			writebytes(codeData, cdoff, 0x8B, 0x54, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rESI:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x56, 0x8B, 0x74, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x8B, 0x74, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rEDI:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x57, 0x8B, 0x7C, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x8B, 0x7C, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rEBP:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x55, 0x8B, 0x6C, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x8B, 0x6C, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rAX:
 			writebytes(codeData, cdoff, 0x66, 0x8B, 0x44, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rBX:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x53, 0x66, 0x8B, 0x5C, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x66, 0x8B, 0x5C, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rCX:
 			writebytes(codeData, cdoff, 0x66, 0x8B, 0x4C, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rDX:
 			writebytes(codeData, cdoff, 0x66, 0x8B, 0x54, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rSI:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x56, 0x66, 0x8B, 0x74, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x66, 0x8B, 0x74, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rDI:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x57, 0x66, 0x8B, 0x7C, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x66, 0x8B, 0x7C, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rBP:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x55, 0x66, 0x8B, 0x6C, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x66, 0x8B, 0x6C, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rAL:
 			writebytes(codeData, cdoff, 0x8A, 0x44, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rBL:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x53, 0x8A, 0x5C, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x8A, 0x5C, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rCL:
 			writebytes(codeData, cdoff, 0x8A, 0x4C, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rDL:
 			writebytes(codeData, cdoff, 0x8A, 0x54, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rAH:
 			writebytes(codeData, cdoff, 0x8A, 0x64, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rBH:
-			stackoff += 4;
-			writebytes(codeData, cdoff, 0x53, 0x8A, 0x7C, 0x24, stackoff);
-			stackoff += 4;
+			writebytes(codeData, cdoff, 0x8A, 0x7C, 0x24, stackoff);
+			stackoff -= 4;
 			break;
 		case rCH:
 			writebytes(codeData, cdoff, 0x8A, 0x6C, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case rDH:
 			writebytes(codeData, cdoff, 0x8A, 0x74, 0x24, stackoff);
-			stackoff += 4;
+			stackoff -= 4;
 			break;
 		case stack1:
 			writebytes(codeData, cdoff, 0x0F, 0xBE, 0x44, 0x24, stackoff, 0x50);
-			stackoff += 8;
 			break;
 		case stack2:
 			writebytes(codeData, cdoff, 0x0F, 0xBF, 0x44, 0x24, stackoff, 0x50);
-			stackoff += 8;
 			break;
 		case stack4:
 			writebytes(codeData, cdoff, 0xFF, 0x74, 0x24, stackoff);
-			stackoff += 8;
 			break;
 		}
 	}
@@ -414,6 +467,13 @@ constexpr T const GenerateUsercallWrapper(int ret, intptr_t address, TArgs... ar
 		break;
 	}
 	codeData[cdoff++] = 0xC3;
+#if USERCALLDEBUG
+	char fn[MAX_PATH];
+	sprintf_s(fn, "usercallwrapper@%08X.bin", address);
+	auto fh = fopen(fn, "wb");
+	fwrite(codeData, memsz, 1, fh);
+	fclose(fh);
+#endif
 	assert(cdoff == memsz);
 	return (T)codeData;
 }
@@ -496,7 +556,7 @@ constexpr void const GenerateUsercallHook(T func, int ret, intptr_t address, TAr
 	}
 	for (int i = 0; i < argc; ++i)
 	{
-		if (argarray[i] == ret)
+		if (regsequal(argarray[i], ret))
 			memsz += 3;
 		else
 			switch (argarray[i])
@@ -626,7 +686,7 @@ constexpr void const GenerateUsercallHook(T func, int ret, intptr_t address, TAr
 	}
 	for (int i = 0; i < argc; ++i)
 	{
-		if (argarray[i] == ret)
+		if (regsequal(argarray[i], ret))
 			writebytes(codeData, cdoff, 0x83, 0xC4, 4);
 		else
 			switch (argarray[i])
@@ -672,6 +732,13 @@ constexpr void const GenerateUsercallHook(T func, int ret, intptr_t address, TAr
 	if (stackcnt > 0)
 		writebytes(codeData, cdoff, 0x83, 0xC4, (uint8_t)(stackcnt * 4));
 	codeData[cdoff++] = 0xC3;
+#if USERCALLDEBUG
+	char fn[MAX_PATH];
+	sprintf_s(fn, "usercallhook@%08X.bin", address);
+	auto fh = fopen(fn, "wb");
+	fwrite(codeData, memsz, 1, fh);
+	fclose(fh);
+#endif
 	assert(cdoff == memsz);
 	if (*(uint8_t*)address == 0xE8)
 		WriteCall((void*)address, codeData);
@@ -684,12 +751,6 @@ class _##NAME##_t \
 { \
 public: \
 	typedef RETURN_TYPE(*PointerType)ARGS; \
- \
-	~_##NAME##_t() \
-	{ \
-		if (ishooked) \
-			Unhook(); \
-	} \
  \
 	RETURN_TYPE operator()ARGS \
 	{ \
@@ -715,23 +776,15 @@ public: \
 		ishooked = true; \
 	} \
  \
-	void Unhook() \
-	{ \
-		if (!ishooked) \
-			throw new std::exception("Attempted to unhook function that wasn't hooked!"); \
-		WriteData(getptr(), origdata, 5); \
-		ishooked = false; \
-	} \
- \
 	RETURN_TYPE Original##ARGS \
 	{ \
 		if (ishooked) \
 		{ \
 			uint8_t hookdata[5]; \
 			memcpy(hookdata, getptr(), 5); \
-			WriteData(getptr(), origdata, 5); \
+			memcpy(getptr(), origdata, 5); \
 			RETURN_TYPE retval = wrapper##ARGNAMES; \
-			WriteData(getptr(), hookdata, 5); \
+			memcpy(getptr(), hookdata, 5); \
 			return retval; \
 		} \
 		else \
@@ -755,12 +808,6 @@ class _##NAME##_t \
 { \
 public: \
 	typedef void (*PointerType)ARGS; \
- \
-	~_##NAME##_t() \
-	{ \
-		if (ishooked) \
-			Unhook(); \
-	} \
  \
 	void operator()ARGS \
 	{ \
@@ -786,23 +833,15 @@ public: \
 		ishooked = true; \
 	} \
  \
-	void Unhook() \
-	{ \
-		if (!ishooked) \
-			throw new std::exception("Attempted to unhook function that wasn't hooked!"); \
-		WriteData(getptr(), origdata, 5); \
-		ishooked = false; \
-	} \
- \
 	void Original##ARGS \
 	{ \
 		if (ishooked) \
 		{ \
 			uint8_t hookdata[5]; \
 			memcpy(hookdata, getptr(), 5); \
-			WriteData(getptr(), origdata, 5); \
+			memcpy(getptr(), origdata, 5); \
 			wrapper##ARGNAMES; \
-			WriteData(getptr(), hookdata, 5); \
+			memcpy(getptr(), hookdata, 5); \
 		} \
 		else \
 			wrapper##ARGNAMES; \
