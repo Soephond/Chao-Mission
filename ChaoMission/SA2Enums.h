@@ -25,7 +25,7 @@ enum Characters
 	Characters_Chaos
 };
 
-#define chfl(name) CharacterFlags_##name = (1 << Characters_##name)
+#define chfl(Name) CharacterFlags_##Name = (1 << Characters_##Name)
 enum CharacterFlags
 {
 	chfl(Sonic),
@@ -1611,7 +1611,7 @@ enum class eCHAO_STATS : Uint8
 enum class eCHAO_TYPE : Uint8
 {
 	Empty = 0x0,
-	Egg = 0x1,
+	EggReward = 0x1,
 	Child = 0x2,
 	Good = 0x3,
 	Bad = 0x4,

@@ -46,8 +46,8 @@ VoidFunc(ResetViewStuff, 0x434CD0);
 VoidFunc(main_gc_alloc, 0x434F00);
 VoidFunc(InitSoundSystem, 0x435440);
 VoidFunc(FreeSoundSystem, 0x435510);
-ThiscallFunctionPointer(int, LoadMLT, (const char* name), 0x435880); // Loads csb files in "resource/gd_PC/MLT"
-FunctionPointer(void, LoadMPB, (const char* name), 0x435C00); // Loads a 3.csb file in "resource/gd_PC/MPB"
+ThiscallFunctionPointer(int, LoadMLT, (const char* Name), 0x435880); // Loads csb files in "resource/gd_PC/MLT"
+FunctionPointer(void, LoadMPB, (const char* Name), 0x435C00); // Loads a 3.csb file in "resource/gd_PC/MPB"
 VoidFunc(FreeSoundQueue, 0x435F10);
 VoidFunc(ResetSoundSystem, 0x435F80);
 FunctionPointer(int, Menu_Unknown_13, (), 0x436040);
@@ -218,7 +218,7 @@ ObjectFunc(Minimal_Disp, 0x48A390);
 ObjectFunc(Minimal_DispDelay2, 0x48A4F0);
 ObjectFunc(Minimal_Dest, 0x48A6B0);
 VoidFunc(ReadMinimalFile, 0x48A6F0);
-FunctionPointer(ObjectMaster*, SpawnMinimal, (float posx, float posy, float posz, int type, int behaviour), 0x48AAD0);
+FunctionPointer(ObjectMaster*, SpawnMinimal, (float posx, float posy, float posz, int TypeRequirement, int behaviour), 0x48AAD0);
 FunctionPointer(ObjectMaster*, Enemy_SpawnMinimal, (float posx, float posy, float posz), 0x48AD10);
 ObjectFunc(MINIMAL, 0x48ADE0);
 FunctionPointer(void, CL_ColPolListUpNear, (csts* ctp), 0x48BAF0); // Finds dynamic collisions within the csts input position and radius.
@@ -2494,11 +2494,11 @@ static inline void AwardBarrier(int n)
 
 // void __usercall(int playerNum@<eax>, float amount)
 static const void* const AddHPPtr = (void*)0x46F4C0;
-static inline void AddHP(int playerNum, float amount)
+static inline void AddHP(int playerNum, float Amount)
 {
 	__asm
 	{
-		push[amount]
+		push[Amount]
 		mov eax, [playerNum]
 		call AddHPPtr
 		add esp, 4
@@ -2507,7 +2507,7 @@ static inline void AddHP(int playerNum, float amount)
 
 // ObjectMaster *__usercall@<eax>(int list@<ecx>, const char *name@<eax>, void (__cdecl *mainSub)(ObjectMaster *)@<edi>, char flags)
 static const void* const LoadObjectPtr = (void*)0x46F610;
-static inline ObjectMaster* LoadObject(int list, const char* name, void(__cdecl* mainSub)(ObjectMaster*), char flags)
+static inline ObjectMaster* LoadObject(int list, const char* Name, void(__cdecl* mainSub)(ObjectMaster*), char flags)
 {
 	ObjectMaster* result;
 	__asm
@@ -2515,7 +2515,7 @@ static inline ObjectMaster* LoadObject(int list, const char* name, void(__cdecl*
 		movzx eax, [flags]
 		push eax
 		mov edi, [mainSub]
-		mov eax, [name]
+		mov eax, [Name]
 		mov ecx, [list]
 		call LoadObjectPtr
 		add esp, 4
@@ -2524,7 +2524,7 @@ static inline ObjectMaster* LoadObject(int list, const char* name, void(__cdecl*
 	return result;
 }
 
-static inline task* CreateElementalTask(int list, const char* name, void(__cdecl*exec)(task*), char flags)
+static inline task* CreateElementalTask(int list, const char* Name, void(__cdecl*exec)(task*), char flags)
 {
 	task* result;
 	__asm
@@ -2532,7 +2532,7 @@ static inline task* CreateElementalTask(int list, const char* name, void(__cdecl
 		movzx eax, [flags]
 		push eax
 		mov edi, [exec]
-		mov eax, [name]
+		mov eax, [Name]
 		mov ecx, [list]
 		call LoadObjectPtr
 		add esp, 4
@@ -2542,12 +2542,12 @@ static inline task* CreateElementalTask(int list, const char* name, void(__cdecl
 }
 // ObjectMaster *__usercall@<eax>(void (__cdecl *mainSub)(ObjectMaster *)@<edi>, int list@<esi>, const char *name)
 static const void* const AllocateObjectMasterPtr = (void*)0x46F680;
-static inline ObjectMaster* AllocateObjectMaster(void(__cdecl* mainSub)(ObjectMaster*), int list, const char* name)
+static inline ObjectMaster* AllocateObjectMaster(void(__cdecl* mainSub)(ObjectMaster*), int list, const char* Name)
 {
 	ObjectMaster* result;
 	__asm
 	{
-		push[name]
+		push[Name]
 		mov esi, [list]
 		mov edi, [mainSub]
 		call AllocateObjectMasterPtr

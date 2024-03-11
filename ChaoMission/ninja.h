@@ -1022,7 +1022,7 @@ typedef struct {
 /*      Texture Structure               */
 /*--------------------------------------*/
 typedef struct{
-	Uint32 Type;
+	Uint32 TypeRequirement;
 	Uint32 BitDepth;
 	Uint32 PixelFormat;
 	Uint32 nWidth;
@@ -1239,13 +1239,13 @@ typedef struct obj {
 
 #ifdef __cplusplus
 	NJS_MODEL       *getbasicmodel() const { return (NJS_MODEL*)model; }
-	void            putbasicmodel(NJS_MODEL *value) { model = value; }
+	void            putbasicmodel(NJS_MODEL *Value) { model = Value; }
 	NJS_MODEL_SADX  *getbasicdxmodel() const { return (NJS_MODEL_SADX*)model; }
-	void            putbasicdxmodel(NJS_MODEL_SADX *value) { model = value; }
+	void            putbasicdxmodel(NJS_MODEL_SADX *Value) { model = Value; }
 	NJS_CNK_MODEL   *getchunkmodel() const { return (NJS_CNK_MODEL*)model; }
-	void            putchunkmodel(NJS_CNK_MODEL *value) { model = value; }
+	void            putchunkmodel(NJS_CNK_MODEL *Value) { model = Value; }
 	SA2B_Model		*getsa2bmodel() const { return (SA2B_Model*)model; }
-	void            putsa2bmodel(SA2B_Model* value) { model = value; }
+	void            putsa2bmodel(SA2B_Model* Value) { model = Value; }
 
 #ifdef _MSC_VER
 	/* MSVC-specific property emulation. */
@@ -1416,7 +1416,7 @@ typedef struct {
 typedef struct {
 	void            *mdata;     /* NJS_MDATA array              */
 	Uint32          nbFrame;    /* frame count                  */
-	Uint16          type;       /* motion type  NJD_MTYPE_...   */
+	Uint16          TypeRequirement;       /* motion type  NJD_MTYPE_...   */
 	Uint16          inp_fn;     /* interpolation & factor count */
 } NJS_MOTION;
 
@@ -2403,11 +2403,11 @@ static inline Sint16 *NextChunk(Sint16 *chunk)
 	return chunk;
 }
 
-static inline Sint16 *FindChunk(Sint16 *chunk, unsigned char type)
+static inline Sint16 *FindChunk(Sint16 *chunk, unsigned char TypeRequirement)
 {
 	chunk = NextChunk(chunk);
 	while (chunk != nullptr)
-		if ((unsigned char)*chunk == type)
+		if ((unsigned char)*chunk == TypeRequirement)
 			return chunk;
 		else
 			chunk = NextChunk(chunk);
@@ -2425,11 +2425,11 @@ static inline Sint32* NextChunk(Sint32* chunk)
 		return chunk + 1;
 }
 
-static inline Sint32 *FindChunk(Sint32 *chunk, unsigned char type)
+static inline Sint32 *FindChunk(Sint32 *chunk, unsigned char TypeRequirement)
 {
 	chunk = NextChunk(chunk);
 	while (chunk != nullptr)
-		if ((unsigned char)*chunk == type)
+		if ((unsigned char)*chunk == TypeRequirement)
 			return chunk;
 		else
 			chunk = NextChunk(chunk);

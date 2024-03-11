@@ -1088,7 +1088,7 @@ struct  ChaoDataBase
 	__int16 Reincarnations;
 	int field_90;
 	int field_94;
-	int Seed;
+	int SeedReward;
 	int field_9C;
 	int field_A0;
 	int TimescaleTimer;
@@ -1114,9 +1114,9 @@ struct  ChaoDataBase
 	char EggColor;
 	SADXBodyType BodyType;
 	char BodyTypeAnimal;
-	char field_DF[41];
-	__int16 DoctorMedal;
-	char field_10A[14];
+	char field_DF[41]; //Race part 1
+	__int16 DoctorMedal; //Race part 2
+	char field_10A[14]; //Karate 12 bytes + 2 undef bytes
 	int SA2AnimalBehavior;
 	SA2BAnimal SA2BArmType;
 	SA2BAnimal SA2BEarType;
@@ -1189,7 +1189,7 @@ struct CCL_INFO
 
 struct JiggleInfo
 {
-	char type;
+	char TypeRequirement;
 	char field_1;
 	__int16 field_2;
 	float speed;
@@ -1327,7 +1327,7 @@ struct Time
 
 struct SaveLevelScore
 {
-	__int16 Rings;
+	__int16 RingReward;
 	__int16 field_2;
 	int Score;
 	Time Time;
@@ -1571,7 +1571,7 @@ struct LevelRankTimes
 struct BlackMarketItem
 {
 	ChaoItemCategory Category;
-	Sint8 Type;
+	Sint8 TypeRequirement;
 };
 
 struct LevelEndPosition
@@ -2145,9 +2145,9 @@ struct EventAudioData
 struct EventScreenEffectData
 {
 	int FrameStart;
-	byte Type;
+	byte TypeRequirement;
 	char field_5[3];
-	NJS_COLOR Color;
+	NJS_COLOR ColorRequirement;
 	byte Fade;
 	byte field_D;
 	__int16 TexID;
@@ -2162,7 +2162,7 @@ struct EventScreenEffectData
 struct EventParticleData
 {
 	int FrameStart;
-	byte Type;
+	byte TypeRequirement;
 	byte MotionID;
 	__int16 field_6;
 	float Setting1;
@@ -2175,9 +2175,9 @@ struct EventParticleData
 struct EventLightingData
 {
 	int FrameStart;
-	int Type;
+	int TypeRequirement;
 	NJS_VECTOR Direction;
-	NJS_VECTOR Color;
+	NJS_VECTOR ColorRequirement;
 	float Intensity;
 	NJS_VECTOR AmbientColor;
 	char field_30[20];
@@ -2202,7 +2202,7 @@ struct EventParticleGeneratorData
 	NJS_VECTOR Spread;
 	int Count;
 	int field_34;
-	int Type;
+	int TypeRequirement;
 	int field_3C;
 };
 
@@ -2326,7 +2326,7 @@ struct MenuVoices
 
 struct TextureAnimData
 {
-	int Type;
+	int TypeRequirement;
 	int field_4;
 	int field_8;
 	int field_C;
@@ -2343,7 +2343,7 @@ struct ModelTextureAnimationArray1
 
 struct ModelTextureAnimationArray2
 {
-	int Type;
+	int TypeRequirement;
 	NJS_OBJECT* Model;
 	TextureAnimData* texanim;
 	int field_C;
@@ -2411,7 +2411,7 @@ struct struct_v1
 
 struct PDS_PERIPHERALINFO
 {
-	Uint32 type;
+	Uint32 TypeRequirement;
 	Uint32 reserved[3];
 	Uint8 is_root;
 	Uint8 area_code;
@@ -2436,7 +2436,7 @@ struct PDS_PERIPHERAL
 	Sint16 y1;
 	Sint16 x2;
 	Sint16 y2;
-	char *name;
+	char *Name;
 	void *extend;
 	Uint32 old;
 	PDS_PERIPHERALINFO *info;
@@ -2445,7 +2445,7 @@ struct PDS_PERIPHERAL
 struct PDS_KEYBOARDINFO
 {
 	unsigned __int8 lang;
-	unsigned __int8 type;
+	unsigned __int8 TypeRequirement;
 	unsigned __int8 led;
 	unsigned __int8 led_ctrl;
 };
@@ -2501,7 +2501,7 @@ struct PDS_BASE
 	__int16 analog_l_y;
 	__int16 analog_r_x;
 	__int16 analog_r_y;
-	int name;
+	int Name;
 	int extend;
 	int old;
 	PDS_PERIPHERALINFO *info;
@@ -2804,7 +2804,7 @@ struct __declspec(align(8)) struct_a2
 
 struct StoryEntry
 {
-	int8_t Type;
+	int8_t TypeRequirement;
 	int8_t Character;
 	int16_t Level;
 	int16_t Events[4];
@@ -2965,14 +2965,14 @@ struct ChaoMotionTableEntry
 
 struct _OBJ_CAMERAMODE
 {
-	const char* name;
+	const char* Name;
 	CameraFuncPtr fnCamera;
 	int mode;
 };
 
 struct _OBJ_CAMERAADJUST
 {
-	const char* name;
+	const char* Name;
 	CameraFuncPtr fnAdjust;
 };
 
@@ -3178,7 +3178,7 @@ struct Number {
 	signed int Number;
 	NJS_VECTOR Pos;
 	float Scale;
-	NJS_COLOR Color;
+	NJS_COLOR ColorRequirement;
 };
 
 struct PolygonPoint {
@@ -3480,7 +3480,7 @@ struct AL_GENE
 	Sint8 Taste[2];
 	Sint8 Tv[2];
 	Sint8 Music[2];
-	eAL_COLOR Color[2];
+	eAL_COLOR ColorRequirement[2];
 	bool NonTex[2]; // Monotone
 	eCHAO_JEWEL Jewel[2];
 	Sint8 Multi[2]; // Shiny
@@ -3510,7 +3510,7 @@ struct CHAO_PARAM_GC
 	int GBARing; // Rings moving from GBA -> GCN
 	Sint8 BootMethed;
 	Sint8 Birthplace;
-	char name[7];
+	char Name[7];
 	Sint8 GBAType;
 	Sint8 GBASkin;
 	Sint8 GBAMood;
@@ -3526,7 +3526,7 @@ struct CHAO_PARAM_GC
 	Sint8 rmsg[16];
 	int runaway;
 	Sint8 dummy[4];
-	eCHAO_TYPE type;  // Chao Type
+	eCHAO_TYPE TypeRequirement;  // Chao Type
 	eCHAO_GARDENS place; // Chao Area
 	signed short like; // Happiness
 	Sint8 ClassNum;
@@ -3733,7 +3733,7 @@ struct AL_ICON
 	int NextTimer;
 	int PuniPhase;
 	int PosPhase;
-	int Color;
+	int ColorRequirement;
 	short TexAnimNum;
 	short TexAnimTimer;
 	int ang;
@@ -3785,9 +3785,9 @@ struct AL_PERCEPTION
 	float SmellRange;
 	AL_PERCEPTION_INFO Player;
 	AL_PERCEPTION_INFO Chao;
-	AL_PERCEPTION_INFO Fruit;
+	AL_PERCEPTION_INFO FruitReward;
 	AL_PERCEPTION_INFO Tree;
-	AL_PERCEPTION_INFO Toy;
+	AL_PERCEPTION_INFO ToyRequirement;
 	AL_PERCEPTION_INFO Sound;
 };
 
@@ -3870,7 +3870,7 @@ struct PAKTexInf
 {
 	char filename[28];
 	Uint32 globalIndex;
-	Uint32 Type;
+	Uint32 TypeRequirement;
 	Uint32 BitDepth;
 	Uint32 PixelFormat;
 	Uint32 nWidth;

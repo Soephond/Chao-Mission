@@ -47,7 +47,7 @@ private:
 
 	ModelFormat format;
 	NJS_OBJECT *model;
-	std::string author, tool, description;
+	std::string author, tool, Description;
 	std::unordered_map<uint32_t, Metadata> metadata;
 	std::unordered_map<void *, std::string> labels1;
 	std::unordered_map<std::string, void *> labels2;

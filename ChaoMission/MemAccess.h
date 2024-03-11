@@ -148,10 +148,10 @@ static inline BOOL WriteCall(void* writeaddress, void* funcaddress)
 #endif
 
 // Data pointer and array declarations.
-#define DataPointer(type, name, address) \
-	static type &name = *(type *)address
-#define DataArray(type, name, address, len) \
-	static DataArray_t<type, address, len> name
+#define DataPointer(TypeRequirement, Name, address) \
+	static TypeRequirement &Name = *(TypeRequirement *)address
+#define DataArray(TypeRequirement, Name, address, len) \
+	static DataArray_t<TypeRequirement, address, len> Name
 
 template<typename T, intptr_t addr, size_t len>
 struct DataArray_t final

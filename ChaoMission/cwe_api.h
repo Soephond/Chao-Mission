@@ -189,22 +189,22 @@ struct CWE_REGAPI {
 	void(*RegisterOtherItemFunc)(int ID, OtherItemPtr func); //things like "themes", we don't really support this properly yet though, we just did it to code the themes
 	void(*SetRebuyFlag)(int Category, int ID, bool rebuy);
 
-	size_t(*AddChaoHat)(NJS_OBJECT* model, NJS_TEXLIST* texlist, BlackMarketItemAttributes* attrib, const char* name, const char* description);
+	size_t(*AddChaoHat)(NJS_OBJECT* model, NJS_TEXLIST* texlist, BlackMarketItemAttributes* attrib, const char* Name, const char* Description);
 
 	//fruit functions
-	int(*RegisterChaoFruit)(NJS_OBJECT* model, NJS_TEXLIST* texlist, ChaoItemStats* stats, BlackMarketItemAttributes* attrib, LastBiteFruitFuncPtr funcPtr, const char* name, const char* description);
+	int(*RegisterChaoFruit)(NJS_OBJECT* model, NJS_TEXLIST* texlist, ChaoItemStats* stats, BlackMarketItemAttributes* attrib, LastBiteFruitFuncPtr funcPtr, const char* Name, const char* Description);
 	void(*SetFruitTexlist)(int ID, NJS_TEXLIST* texlist); //used to override the textures of a fruit, i honestly don't remember why we did this at all
 
 	//accessory functions
-	int(*RegisterChaoAccessory)(EAccessoryType type, NJS_OBJECT* model, NJS_TEXLIST* texlist, BlackMarketItemAttributes* attrib, const char* name, const char* description);
+	int(*RegisterChaoAccessory)(EAccessoryType TypeRequirement, NJS_OBJECT* model, NJS_TEXLIST* texlist, BlackMarketItemAttributes* attrib, const char* Name, const char* Description);
 	void(*AccessoryMakeBald)(int accessory_id);
 	void(*AccessoryDisableJiggle)(int accessory_id);
 
 	//tree
-	size_t(*AddChaoTree)(const CWE_API_TREE_DATA& tree_data, BlackMarketItemAttributes* attrib, const char* name, const char* description);
+	size_t(*AddChaoTree)(const CWE_API_TREE_DATA& tree_data, BlackMarketItemAttributes* attrib, const char* Name, const char* Description);
 
 	//specials
-	int(*RegisterChaoSpecial)(NJS_OBJECT* model, NJS_TEXLIST* texlist, BlackMarketItemAttributes* attrib, SpecialItemFuncPtr func, SpecialConditionFuncPtr cond, const char* name, const char* description, bool isAction);
+	int(*RegisterChaoSpecial)(NJS_OBJECT* model, NJS_TEXLIST* texlist, BlackMarketItemAttributes* attrib, SpecialItemFuncPtr func, SpecialConditionFuncPtr cond, const char* Name, const char* Description, bool isAction);
 	size_t(*RegisterEyeColor)(const char* textureName, NJS_TEXLIST* texlist, int specialID); //lens, to be used in conjunction with specials
 
 	//custom chao
@@ -215,13 +215,13 @@ struct CWE_REGAPI {
 	void(*RegisterChaoMinimalFruit)(int fruitID, int minimalID, int chanceMin, int chanceMax);
 
 	//animation
-	int(*RegisterChaoAnimation)(std::string name, MotionTableAction* action);
+	int(*RegisterChaoAnimation)(std::string Name, MotionTableAction* action);
 	int (*RegisterChaoAnimTransition) (const std::string& from, const std::string& to);
-	int(*GetChaoAnimationIndex)(const std::string& name);
+	int(*GetChaoAnimationIndex)(const std::string& Name);
 	MotionTableAction* (*GetChaoAnimation) (size_t index);
 
 	//misc
-	void(*RegisterChaoTexlistLoad)(const char* name, NJS_TEXLIST* load); //register texlists to load/unload in chao world
+	void(*RegisterChaoTexlistLoad)(const char* Name, NJS_TEXLIST* load); //register texlists to load/unload in chao world
 	void(*RegisterSaveLoad)(const char* suffix, void* buffer, int size); //register custom chao world savefiles like _CWE, karate mod uses this too
 	void(*AddOdekakeMenu)(const CWE_API_ODEKAKE_ENTRY& entry); //add new button to transporter main menu, and handles logic to addnew menu
 };

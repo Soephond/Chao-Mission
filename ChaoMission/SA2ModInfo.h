@@ -124,11 +124,11 @@ struct Mod
 	const ModDepsList Dependencies;
 
 	template <typename T>
-	T GetDllExport(const char* name) const
+	T GetDllExport(const char* Name) const
 	{
 		if (!DLLHandle)
 			return nullptr;
-		return reinterpret_cast<T>(GetProcAddress(DLLHandle, name));
+		return reinterpret_cast<T>(GetProcAddress(DLLHandle, Name));
 	}
 };
 
@@ -153,7 +153,7 @@ struct ModList
 	// Find a mod by its ID.
 	iterator(*find)(const char* id);
 	// Find a mod by its name.
-	iterator(*find_by_name)(const char* name);
+	iterator(*find_by_name)(const char* Name);
 	// Find a mod by its folder.
 	iterator(*find_by_folder)(const char* folder);
 	// Find a mod by its DLL handle.
@@ -234,7 +234,7 @@ struct HelperFunctions
 	// If the number of digits is superior, it will add leading zeroes.
 	// Example: DisplayDebugNumber(NJM_LOCATION(x, y), 123, 5); will display 00123.
 	// Requires version >= 8
-	void(__cdecl* DisplayDebugNumber)(int loc, int value, int numdigits);
+	void(__cdecl* DisplayDebugNumber)(int loc, int Value, int numdigits);
 
 	// The settings that the mod loader was initialized with.
 	// Requires version >= 9.

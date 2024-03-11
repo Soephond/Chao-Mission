@@ -9,7 +9,7 @@ private:
 	bool initFromObj;
 protected:
 	ObjectMaster *objData;
-	GameObject(int index, const char *name = "GameObject");
+	GameObject(int index, const char *Name = "GameObject");
 	GameObject(ObjectMaster *obj);
 	virtual void Delete();
 public:
@@ -36,7 +36,7 @@ class GameEntity : GameObject
 protected:
 	EntityData1 *GetData();
 public:
-	GameEntity(int index, const char *name = "GameEntity");
+	GameEntity(int index, const char *Name = "GameEntity");
 	char GetAction();
 	void SetAction(char action);
 	Rotation &GetRotation();
