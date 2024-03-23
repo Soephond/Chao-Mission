@@ -51,6 +51,19 @@ static constexpr Tret SizeOfArray(const T(&)[N]) noexcept
 #endif
 #include <Windows.h>
 
+static HANDLE curproc;
+static bool curprocinitialized = false;
+
+static inline BOOL WriteData(void* writeaddress, const void* data, SIZE_T datasize, SIZE_T* byteswritten)
+{
+	if (!curprocinitialized)
+	{
+		curproc = GetCurrentProcess();
+		curprocinitialized = true;
+	}
+	return WriteProcessMemory(curproc, writeaddress, data, datasize, byteswritten);
+}
+
 static inline BOOL WriteData(void* writeaddress, const void* data, SIZE_T datasize)
 {
 	DWORD oldprot;
@@ -60,21 +73,45 @@ static inline BOOL WriteData(void* writeaddress, const void* data, SIZE_T datasi
 }
 
 template<typename T>
+static inline BOOL WriteData(void* writeaddress, const void* data, SIZE_T datasize)
+{
+	return WriteData(writeaddress, data, datasize, nullptr);
+}
+
+template<typename T>
+static inline BOOL WriteData(T const* writeaddress, const T data, SIZE_T* byteswritten)
+{
+	return WriteData((void*)writeaddress, (void*)&data, (SIZE_T)sizeof(data), byteswritten);
+}
+
+template<typename T>
 static inline BOOL WriteData(T const* writeaddress, const T data)
 {
-	return WriteData((void*)writeaddress, (void*)&data, (SIZE_T)sizeof(data));
+	return WriteData(writeaddress, data, nullptr);
+}
+
+template<typename T>
+static inline BOOL WriteData(T* writeaddress, const T& data, SIZE_T* byteswritten)
+{
+	return WriteData(writeaddress, &data, sizeof(data), byteswritten);
 }
 
 template<typename T>
 static inline BOOL WriteData(T* writeaddress, const T& data)
 {
-	return WriteData(writeaddress, &data, sizeof(data));
+	return WriteData(writeaddress, data, nullptr);
+}
+
+template <typename T, size_t N>
+static inline BOOL WriteData(void* writeaddress, const T(&data)[N], SIZE_T* byteswritten)
+{
+	return WriteData(writeaddress, data, SizeOfArray(data), byteswritten);
 }
 
 template <typename T, size_t N>
 static inline BOOL WriteData(void* writeaddress, const T(&data)[N])
 {
-	return WriteData(writeaddress, data, SizeOfArray(data));
+	return WriteData(writeaddress, data, nullptr);
 }
 
 /**

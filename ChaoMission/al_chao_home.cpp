@@ -8,14 +8,13 @@ using namespace std;
 NJS_TEXNAME AL_ODE_CHAO_TEXNAME[1];
 NJS_TEXLIST AL_ODE_CHAO_TEXLIST[] = { AL_ODE_CHAO_TEXNAME, 1 };
 
-int CalculateReward(ChaoData* chao)
+int CalculateReward(CHAO_PARAM_GC* chao)
 {
-	ChaoDataBase* chaoInfo = &chao->data;
-	int eggSalePrice = CategoryAttribs[9].attrib[chaoInfo->EggColor + 0x10].SalePrice / 2;
-	float specialChaoMult = chaoInfo->TypeRequirement > 0x13 && chaoInfo->Reincarnations >= 2 ? 2.0f : 1.0f;
+	int eggSalePrice = CategoryAttribs[9].attrib[(Uint8)chao->body.EggColor + 0x10].SalePrice / 2;
+	float specialChaoMult = chao->Type >= (eCHAO_TYPE)0x13 && chao->nbSucceed >= 2 ? 2.0f : 1.0f;
 	float randomMult = ((rand() % 20) + 90) / 100.0f; //Get a random number between 90 and 110 and divide by 100 to get a float between 0.9 and 1.1
-	float happinessMult = (chaoInfo->Happiness / 600) + 1;
-	int ageExtra = chaoInfo->Reincarnations * sqrt(0.87) * 800;
+	float happinessMult = (chao->like / 600) + 1;
+	int ageExtra = chao->nbSucceed * sqrt(0.87) * 800;
 	float gradeSqrt = 1.0f;
 	int totalLevels = 0;
 	int levelExtra = 0;
@@ -23,8 +22,8 @@ int CalculateReward(ChaoData* chao)
 
 	for (int i = 0; i < 5; i++)
 	{
-		gradeSqrt *= (chaoInfo->StatGrades[i] * 0.048f) + 0.6f;
-		totalLevels += chaoInfo->StatLevels[i];
+		gradeSqrt *= (chao->Abl[i] * 0.048f) + 0.6f;
+		totalLevels += chao->Lev[i];
 	}
 
 	if (totalLevels == 0)
@@ -41,7 +40,7 @@ int CalculateReward(ChaoData* chao)
 
 	total = (eggSalePrice + ((levelExtra + ageExtra) * specialChaoMult)) * randomMult * happinessMult;
 
-	if (chaoInfo->Reincarnations == 0 && chaoInfo->TypeRequirement == ChaoType_Child)
+	if (chao->nbSucceed == 0 && chao->Type == eCHAO_TYPE::Child)
 	{
 		total *= .06;
 	}
@@ -64,7 +63,7 @@ void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 	ODE_MENU_MASTER_WORK* v1; // edi
 	Uint32 press; // eax
 	const char* v3; // edi
-	ChaoData* DataOfChao; // eax
+	CHAO_PARAM_GC* DataOfChao; // eax
 	AL_GBAManagerExecutor_Data* v5; // eax
 	int timer; // eax
 	int v7; // eax
@@ -220,7 +219,7 @@ void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 			}
 			AlMsgWarnClear();
 			DataOfChao = AL_GBAManagerGetChaoData();
-			if (DataOfChao->data.Happiness >= 85)
+			if (DataOfChao->like >= 85)
 			{
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "The chao leaps in your arms to say good-bye.", TextLanguage == 0);
 				sub_543860();
@@ -228,7 +227,7 @@ void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 				sub_543860();
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "While they are walking away they keep on looking back, smiling and waving.", TextLanguage == 0);
 			}
-			else if (DataOfChao->data.Happiness <= -50)
+			else if (DataOfChao->like <= -50)
 			{
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Your chao cries when they hear they go to a place where they are finally loved.", TextLanguage == 0);
 				sub_543860();
@@ -240,7 +239,7 @@ void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "'Please raise your chao's to be happier!", TextLanguage == 0);
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "I mean, we didn't expect much, but come on!'", TextLanguage == 0);
 			}
-			else if (DataOfChao->data.Happiness > -50 && DataOfChao->data.Happiness < 0)
+			else if (DataOfChao->like > -50 && DataOfChao->like < 0)
 			{
 				AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "The chao walks away to their new home.", TextLanguage == 0);
 				sub_543860();
@@ -268,7 +267,7 @@ void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 			DataOfChao = AL_GBAManagerGetChaoData();
 			if (DataOfChao)
 			{
-				memset(DataOfChao, 0, sizeof(ChaoData));
+				memset(DataOfChao, 0, sizeof(CHAO_PARAM_GC));
 				v5 = AL_GBAManagerExecutor_ptr;
 				if (AL_GBAManagerExecutor_ptr)
 				{

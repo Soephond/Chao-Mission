@@ -31,7 +31,7 @@ DataPointer(ODE_MENU_STATE, MenuStatus, 0x1AED254);
 DataPointer(ODE_MENU_MASTER_WORK*, AL_OdekakeMenuMaster_Data_ptr, 0x1AED324);
 DataPointer(int, dword_1A557C8, 0x1A557C8);
 
-FastcallFunctionPointer(ChaoData*, AL_GBAManagerGetChaoData, (), 0x532D00);
+FastcallFunctionPointer(CHAO_PARAM_GC*, AL_GBAManagerGetChaoData, (), 0x532D00);
 FunctionPointer(ODE_MENU_MASTER_WORK*, AL_OdeMenuChangeStage, (), 0x57E680);
 FastcallFunctionPointer(signed int, ScreenFade2, (char a1, unsigned __int8 a2, unsigned __int8 a3, unsigned __int8 a4), 0x478790);
 FastcallFunctionPointer(void, AL_OdeMenuSetMode, (int t, int mode), 0x57E6D0);

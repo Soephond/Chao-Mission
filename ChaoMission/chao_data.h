@@ -1,5 +1,14 @@
 #pragma once
 
+enum CharacterBondOrder {
+	CharacterBond_Sonic = 0,
+	CharacterBond_Shadow = 1,
+	CharacterBond_Tails = 2,
+	CharacterBond_Eggman = 3,
+	CharacterBond_Knuckles = 4,
+	CharacterBond_Rouge = 5,
+};
+
 enum MedalFlags : Uint16
 {
 	MedalFlags_None = 0,
@@ -76,6 +85,17 @@ enum ChaoShiny : byte
 enum ChaoTone : bool {
 	ChaoTone_MonoTone = true,
 	ChaoTone_TwoTone = false
+};
+
+enum AnimalParts : byte {
+	AnimalParts_Arms = 0,
+	AnimalParts_Ears = 1,
+	AnimalParts_Forehead = 2,
+	AnimalParts_Horn = 3,
+	AnimalParts_Legs = 4,
+	AnimalParts_Tail = 5,
+	AnimalParts_Wings = 6,
+	AnimalParts_Face = 7
 };
 
 enum Al_Animal : byte {

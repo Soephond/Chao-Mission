@@ -17,7 +17,11 @@
 #include "al_tex.h"
 #include "al_chao_home.h"
 
+#define WriteNoOP(from, to) WriteData<(to) - (from)>((char*)(from), (char)0x90);
+
 using namespace std;
+
+DataPointer(unsigned char, testvalue, 0x5628B1);
 
 FunctionPointer(void, sub_5ACBB0, (float a1, float a2), 0x5ACBB0);
 FastcallFunctionPointer(void, sub_443030, (int a1), 0x443030);
@@ -27,9 +31,18 @@ const HelperFunctions* HelperFunctionsGlobal;
 
 FastcallFunctionHook<void, ODE_MENU_MASTER_WORK*> Call_Goodbye_Menu_hk(0x5A6F50);
 
+template<typename T>
+inline void PatchData(T* writeaddress, const T& data)
+{
+	if ((uint32_t)writeaddress < 0x87342C)
+		WriteData(writeaddress, data, nullptr);
+	else
+		*writeaddress = data;
+}
 
 extern "C" {
 
+	
 
 	//registering data functions. - Needs to exist.
 	void (*RegisterDataFunc)(void* ptr);
@@ -63,6 +76,7 @@ extern "C" {
 
 		RegisterDataFunc = (void (*)(void* ptr))GetProcAddress(h, "RegisterDataFunc");
 		RegisterDataFunc(CWELoad);
+		
 	}
 
 	// Optional.
@@ -70,6 +84,7 @@ extern "C" {
 	// It is recommended to test for game state so that you only run code at a specific time.
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
+		
 	}
 
 	// Optional.

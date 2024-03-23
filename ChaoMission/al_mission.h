@@ -31,97 +31,14 @@ enum REQUIREMENT_TYPE
 	RaceRequirement = 6,
 	KarateRequirement = 7,
 	LifetimeRequirement = 8,
-	InfluenceRequirement = 9,
 	BondRequirement = 10,
 };
+
 
 struct ChaoStatValues {
 	byte Level;
 	StatGrade Grade;
 	short Points;
-};
-
-struct AnimalPart {
-	Al_Animal Arms;
-	Al_Animal Ears;
-	Al_Animal Forehead;
-	Al_Animal Horn;
-	Al_Animal Legs;
-	Al_Animal Tail;
-	Al_Animal Wings;
-	Al_Animal Face;
-};
-
-union RequirementValue
-{
-	ChaoType Type;
-
-	struct Appearance {
-		ChaoColor Color;
-		ChaoTone Tone;
-		ChaoShiny Shiny;
-		SA2BTexture Texture;
-		bool Negative;
-		AnimalPart AnimalParts;
-	} Appearance;
-
-	struct Stat {
-		ChaoStatValues Swim;
-		ChaoStatValues Fly;
-		ChaoStatValues Run;
-		ChaoStatValues Power;
-		ChaoStatValues Stamina;
-		ChaoStatValues Luck;
-		ChaoStatValues Intelligence;
-		__int8 Happiness;
-	} Stat;
-
-	struct Abilities {
-		__int16 AbilitiesLearned;
-		int TotalAbilitiesLearned;
-	} Abilities;
-
-	struct Toys {
-		__int16 ToysUnlocked;
-		int TotalToysUnlocked;
-	} Toys;
-
-	struct Classroom {
-		__int32 ClassesAttended;
-		int TotalClassesAttended;
-	} Classroom;
-
-	struct Race {
-		MedalFlags MedalsEarned;
-		__int8 TotalMedals;
-		short RacesWon;
-	} Race;
-
-	struct Karate {
-		KarateRank Rank;
-		short MatchesWon;
-	} Karate;
-
-	struct Lifetime {
-		short Age;
-		short Reincarnations;
-	} Lifetime;
-
-	struct Influence {
-		float SwimFlyInfluence;
-		float RunPowerInfluence;
-		float Magnitude;
-		float Alignment;
-	} Influence;
-
-	struct Bond {
-		__int8 Sonic;
-		__int8 Tails;
-		__int8 Knuckles;
-		__int8 Shadow;
-		__int8 Rouge;
-		__int8 Eggman;
-	} Bond;
 };
 
 union RewardValue
@@ -156,10 +73,188 @@ struct MissionRewards
 	MissionReward Rewards[];
 };
 
+enum ValueCheckType {
+	ChaoTypeCheck = 0,
+	LevelCheck = 1,
+	GradeCheck = 2,
+	PointsCheck = 3,
+	ColorCheck = 4,
+	ToneCheck = 5,
+	ShinyCheck = 6,
+	TextureCheck = 7,
+	AnimalArmsCheck = 8,
+	AnimalEarsCheck = 9,
+	AnimalForeheadCheck = 10,
+	AnimalHornCheck = 11,
+	AnimalLegsCheck = 12,
+	AnimalTailCheck = 13,
+	AnimalWingsCheck = 14,
+	AnimalFaceCheck = 15,
+	FlagCheck = 16,
+	TotalCheck = 17,
+	AmountWonCheck = 18,
+	AgeCheck = 19,
+	ReincarnationsCheck = 20,
+	SwimFlyInfluenceCheck = 21,
+	RunPowerInfluenceCheck = 22,
+	AlignmentCheck = 23,
+	MagnitudeCheck = 24,
+	HappinessCheck = 25,
+	CharacterLikeCheck = 26,
+	CharacterFearCheck = 27,
+	CharacterDistanceCheck = 28,
+	CharacterMeetCheck = 29,
+	KarateRankCheck = 30,
+};
+
+enum RangeType {
+	RangeType_MinRange = 0,
+	RangeType_MaxRange = 1,
+	RangeType_Range = 2,
+	RangeType_NoRange = 3,
+};
+
+template<typename T>
+struct ValueCheckStruct {
+	RangeType range = RangeType_NoRange;
+	bool inverted = false;
+	T value;
+	T min;
+	T max;
+};
+
+union ValueCheck {
+	struct ChaoTypeCheck
+	{
+		ValueCheckType Type;
+
+		union Type {
+			ValueCheckStruct<ChaoType> Type;
+			ValueCheckStruct<float> SwimFlyInfluence;
+			ValueCheckStruct<float> RunPowerInfluence;
+			ValueCheckStruct<float> Alignment;
+			ValueCheckStruct<float> Magnitude;
+		} Check;
+	}ChaoTypeCheck;
+
+	struct StatCheck
+	{
+		ChaoSkill Skill;
+		ValueCheckType Type;
+
+		union Stat {
+			ValueCheckStruct<ChaoGrade> Grade;
+			ValueCheckStruct<short> Points;
+			ValueCheckStruct<byte> Level;
+			ValueCheckStruct<short> Happiness;
+		} Check;
+	}StatCheck;
+
+	struct AppearanceCheck
+	{
+		ValueCheckType Type;
+
+		union Appearance {
+			ValueCheckStruct<ChaoColor> Color;
+			ValueCheckStruct<ChaoTone> Tone;
+			ValueCheckStruct<ChaoShiny> Shiny;
+			ValueCheckStruct<SA2BTexture> Texture;
+			ValueCheckStruct<Al_Animal> AnimalArms;
+			ValueCheckStruct<Al_Animal> AnimalEars;
+			ValueCheckStruct<Al_Animal> AnimalForehead;
+			ValueCheckStruct<Al_Animal> AnimalHorn;
+			ValueCheckStruct<Al_Animal> AnimalLegs;
+			ValueCheckStruct<Al_Animal> AnimalTail;
+			ValueCheckStruct<Al_Animal> AnimalWings;
+			ValueCheckStruct<Al_Animal> AnimalFace;
+		} Check;
+	}AppearanceCheck;
+
+	struct AbilityCheck
+	{
+		ValueCheckType Type;
+
+		union Ability {
+			ValueCheckStruct<__int16> AbilitiesLearned;
+			ValueCheckStruct<int> TotalAbilitiesLearned;
+		} Check;
+	}AbilityCheck;
+
+	struct ToyCheck
+	{
+		ValueCheckType Type;
+
+		union Toy {
+			ValueCheckStruct<__int16> ToysUnlocked;
+			ValueCheckStruct<int> TotalToysUnlocked;
+		} Check;
+	} ToyCheck;
+
+	struct ClassCheck
+	{
+		ValueCheckType Type;
+
+		union Class {
+			ValueCheckStruct<__int32> ClassesAttended;
+			ValueCheckStruct<int> TotalClassesAttended;
+		} Check;
+	} ClassCheck;
+
+	struct RaceCheck
+	{
+		ValueCheckType Type;
+
+		union Race {
+			ValueCheckStruct<MedalFlags> MedalsEarned;
+			ValueCheckStruct<__int8> TotalMedals;
+		} Check;
+	} RaceCheck;
+
+	struct KarateCheck
+	{
+		ValueCheckType Type;
+
+		union Karate {
+			ValueCheckStruct<KarateRank> Rank;
+			ValueCheckStruct<short> MatchesWon;
+		} Check;
+	}KarateCheck;
+
+	struct LifetimeCheck
+	{
+		ValueCheckType Type;
+
+		union Lifetime {
+			ValueCheckStruct<short> Age;
+			ValueCheckStruct<short> Reincarnations;
+		} Check;
+	}LifetimeCheck;
+
+	struct BondCheck
+	{
+		CharacterBondOrder Character;
+		ValueCheckType Type;
+
+		union Bond {
+			ValueCheckStruct<Uint8> Like;
+			ValueCheckStruct<Sint8> Fear;
+			ValueCheckStruct<short> Distance;
+			ValueCheckStruct<short> Meet;
+		} Check;
+	}BondCheck;
+};
+
+struct ValueCheckPoint
+{
+	int Amount;
+	ValueCheckPoint* OrCheck = nullptr;
+	ValueCheck Checks[];
+};
+
 struct MissionRequirement
 {
 	REQUIREMENT_TYPE Type;
-	bool (*RequirementCheck)(RequirementValue*);
+	ValueCheckPoint* CheckList;
 	const char* RequirementDescription;
 };
 
@@ -193,11 +288,12 @@ struct ChaoMissions
 
 EXTERN_C_START
 void Display_Mission_Arrows(ObjectMaster* a1);
-void Load_Mission_Text(int curMission);
+void Load_Mission_Text(int curMission, bool noText);
 void Mission_Arrow_Executor(ObjectMaster* a1);
 void Load_Mission_Arrows();
 void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork);
-bool Check_Mission_Requirement(MissionRequirement* Requirement);
+bool Check_Mission_Requirement(MissionRequirement* requirement, CHAO_PARAM_GC* chao);
+bool RequirementsPassed();
 void Give_Mission_Reward(MissionReward* Reward);
 EXTERN_C_END
 

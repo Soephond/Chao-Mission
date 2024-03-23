@@ -3480,7 +3480,7 @@ struct AL_GENE
 	Sint8 Taste[2];
 	Sint8 Tv[2];
 	Sint8 Music[2];
-	eAL_COLOR ColorRequirement[2];
+	eAL_COLOR Color[2];
 	bool NonTex[2]; // Monotone
 	eCHAO_JEWEL Jewel[2];
 	Sint8 Multi[2]; // Shiny
@@ -3526,7 +3526,7 @@ struct CHAO_PARAM_GC
 	Sint8 rmsg[16];
 	int runaway;
 	Sint8 dummy[4];
-	eCHAO_TYPE TypeRequirement;  // Chao Type
+	eCHAO_TYPE Type;  // Chao Type
 	eCHAO_GARDENS place; // Chao Area
 	signed short like; // Happiness
 	Sint8 ClassNum;
