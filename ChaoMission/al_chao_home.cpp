@@ -1,5 +1,4 @@
 #include <Windows.h>
-#include <math.h>
 
 #include "al_chao_home.h"
 
@@ -13,8 +12,8 @@ int CalculateReward(CHAO_PARAM_GC* chao)
 	int eggSalePrice = CategoryAttribs[9].attrib[(Uint8)chao->body.EggColor + 0x10].SalePrice / 2;
 	float specialChaoMult = chao->Type >= (eCHAO_TYPE)0x13 && chao->nbSucceed >= 2 ? 2.0f : 1.0f;
 	float randomMult = ((rand() % 20) + 90) / 100.0f; //Get a random number between 90 and 110 and divide by 100 to get a float between 0.9 and 1.1
-	float happinessMult = (chao->like / 600) + 1;
-	int ageExtra = chao->nbSucceed * sqrt(0.87) * 800;
+	float happinessMult = (static_cast<float>(chao->like) / 600) + 1;
+	int ageExtra = chao->nbSucceed * static_cast<int>(sqrt(0.87)) * 800;
 	float gradeSqrt = 1.0f;
 	int totalLevels = 0;
 	int levelExtra = 0;
@@ -36,13 +35,13 @@ int CalculateReward(CHAO_PARAM_GC* chao)
 		ageExtra = 1;
 	}
 
-	levelExtra = gradeSqrt * totalLevels * 35;
+	levelExtra = (int)gradeSqrt * totalLevels * 35;
 
-	total = (eggSalePrice + ((levelExtra + ageExtra) * specialChaoMult)) * randomMult * happinessMult;
+	total = (int)(((float)eggSalePrice + ((float)levelExtra + (float)ageExtra) * specialChaoMult) * (randomMult * happinessMult));
 
 	if (chao->nbSucceed == 0 && chao->Type == eCHAO_TYPE::Child)
 	{
-		total *= .06;
+		total =  (int)((float)total * .06);
 	}
 
 	return total;
@@ -61,12 +60,12 @@ void __fastcall Handle_CHAO_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 {
 	ODE_MENU_MASTER_WORK* v1; // edi
-	Uint32 press; // eax
+	//Uint32 press; // eax
 	const char* v3; // edi
 	CHAO_PARAM_GC* DataOfChao; // eax
 	AL_GBAManagerExecutor_Data* v5; // eax
-	int timer; // eax
-	int v7; // eax
+	//int timer; // eax
+	//int v7; // eax
 	int v8; // eax
 	int reward = 100;
 	std::string rewardString;
@@ -101,7 +100,7 @@ void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 		LABEL_4:
 			if (AL_OdeMenuGetState() == ODE_MENU_STATE_OK)
 			{
-			LABEL_5:
+			//LABEL_5:
 				AL_OdeMenuSetMode(0, 2);
 				dword_1A557C8 = 0;
 				return;
@@ -314,7 +313,7 @@ void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 			dword_1A557C8 = 0;
 			return;
 		case 0x12:
-			if (ScreenFade2(255, 255u, 255u, 255u))
+			if (ScreenFade2((char)255, 255u, 255u, 255u))
 			{
 				AL_Change_Chao_Area(LastChaoArea);
 			}

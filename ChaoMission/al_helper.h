@@ -22,7 +22,7 @@ struct RingDisplayData
 #pragma pack(pop)
 
 
-char* DecodeChaoName(char Name[]);
+bool DecodeChaoName(wchar_t Name[], wchar_t ChaoNameDecoded[7]);
 
 //void __usercall RingDisplay_AddRings(signed int a1@<eax>)
 const int sub_5A6B30 = 0x5A6B30;

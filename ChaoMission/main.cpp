@@ -1,10 +1,13 @@
 ﻿#pragma once
+
 #include "pch.h"
+#include "IniFile.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <array>
 #include <format>
+#include <rapidjson/istreamwrapper.h>
 
 #include "FunctionHook.h"
 #include "cwe_api.h"
@@ -16,6 +19,9 @@
 #include "al_ui.h"
 #include "al_tex.h"
 #include "al_chao_home.h"
+
+#include "JsonMissionReader.h"
+#include "MissionFileHandler.h"
 
 #define WriteNoOP(from, to) WriteData<(to) - (from)>((char*)(from), (char)0x90);
 
@@ -38,6 +44,25 @@ inline void PatchData(T* writeaddress, const T& data)
 		WriteData(writeaddress, data, nullptr);
 	else
 		*writeaddress = data;
+}
+
+jsonDocument Test(const std::string path)
+{
+	std::ifstream file(path);
+
+	jsonDocument jsonData;
+
+	if (file.is_open()) {
+		rapidjson::IStreamWrapper wrapper(file);
+		jsonData.ParseStream(wrapper);
+		file.close();
+	}
+	else {
+		std::cout << "Unable to open file " << path << std::endl;
+		return NULL;
+	}
+
+	return jsonData;
 }
 
 extern "C" {
@@ -69,6 +94,10 @@ extern "C" {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
 		HelperFunctionsGlobal = &helperFunctions;
+		const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
+
+		//Setup Global settings
+		MaxAmountOfMissions = config->getInt("", "AmountActiveMissions", 5);
 
 		HMODULE h = GetModuleHandle(L"CWE");
 
@@ -76,7 +105,6 @@ extern "C" {
 
 		RegisterDataFunc = (void (*)(void* ptr))GetProcAddress(h, "RegisterDataFunc");
 		RegisterDataFunc(CWELoad);
-		
 	}
 
 	// Optional.

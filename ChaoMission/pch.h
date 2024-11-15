@@ -12,7 +12,7 @@
 #include "SA2ModLoader.h"
 #include "GameObject.h"
 #include "LandTableInfo.h"
-#include "Trampoline.h";
+#include "Trampoline.h"
 #include "ModelInfo.h"
 #include "FunctionHook.h"
 

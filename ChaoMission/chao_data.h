@@ -82,9 +82,9 @@ enum ChaoShiny : byte
 	ChaoShiny_Shiny = 2,
 };
 
-enum ChaoTone : bool {
-	ChaoTone_MonoTone = true,
-	ChaoTone_TwoTone = false
+enum ChaoTone : byte {
+	ChaoTone_MonoTone = 1,
+	ChaoTone_TwoTone = 0
 };
 
 enum AnimalParts : byte {

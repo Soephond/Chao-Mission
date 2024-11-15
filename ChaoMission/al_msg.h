@@ -124,8 +124,6 @@
 	VoidFunc(sub_52FB80, 0x52FB80);
 	FunctionPointer(KinderCoMessageThing*, AlMsgWarnClear, (), 0x543830);
 
-extern "C" {
 	//void __usercall ALMsgWinAddLineC(KinderCoMessageThing* a2@<esi>, const char* a1@<ebx>, bool a3)
 	const int sub_579E30Ptr = 0x579E30;
-	void AlMsgWinAddLineC(KinderCoMessageThing* a2, const char* a1, bool a3);
-}
+	void AlMsgWinAddLineC(KinderCoMessageThing* a2, const char* a1, signed int a3);
