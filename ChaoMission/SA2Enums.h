@@ -1267,9 +1267,9 @@ enum ChaoSeed : __int8
 	ChaoSeed_StrongSeed = 0x0,
 	ChaoSeed_TastySeed = 0x1,
 	ChaoSeed_HeroSeed = 0x2,
-	ChaoSeed_DarkTheme = 0x3,
+	ChaoSeed_DarkSeed = 0x3,
 	ChaoSeed_RoundSeed = 0x4,
-	ChaoSeed_TriangleTheme = 0x5,
+	ChaoSeed_TriangleSeed = 0x5,
 	ChaoSeed_SquareSeed = 0x6,
 };
 
@@ -1611,7 +1611,7 @@ enum class eCHAO_STATS : Uint8
 enum class eCHAO_TYPE : Uint8
 {
 	Empty = 0x0,
-	EggReward = 0x1,
+	Egg = 0x1,
 	Child = 0x2,
 	Good = 0x3,
 	Bad = 0x4,
@@ -2874,4 +2874,24 @@ enum E_FLAG : Sint16
 	E_FLAG_HITWALL = 0x100,     /* If the enemy hit a wall */
 	E_FLAG_NOWATER = 0x2000,    /* If the collision system should ignore water */
 	E_FLAG_UNDERWATER = 0x4000  /* If the enemy is underwater */
+};
+
+enum eCHAO_STAGE_NUMBER
+{    
+	CHAO_STG_NONE,              /* initial stage                                    */
+
+	CHAO_STG_NEUT,              /* neutral garden                                   */
+	CHAO_STG_HERO,              /* hero garden                                      */
+	CHAO_STG_DARK,              /* dark garden                                      */
+	CHAO_STG_RACE,              /* chao race                                        */
+	CHAO_STG_ENTRANCE,          /* race entrance                                    */
+	CHAO_STG_KINDER,            /* kindergarten                                     */
+	CHAO_STG_LOBBY,             /* chao lobby                                       */
+	CHAO_STG_ENTRANCE_2P,       /* race entrance 2p                                 */
+	CHAO_STG_STADIUM,           /* stadium (omochao cave)                           */
+	CHAO_STG_KARATE,            /* karate                                           */
+	CHAO_STG_KARATE_2P,         /* karate 2p                                        */
+	CHAO_STG_ODEKAKE,           /* odekake (transporter)                            */
+
+	NB_CHAO_STAGE,              /* chao stage number                                */
 };

@@ -2145,9 +2145,9 @@ struct EventAudioData
 struct EventScreenEffectData
 {
 	int FrameStart;
-	byte TypeRequirement;
+	byte Type;
 	char field_5[3];
-	NJS_COLOR ColorRequirement;
+	NJS_COLOR Color;
 	byte Fade;
 	byte field_D;
 	__int16 TexID;

@@ -13,7 +13,8 @@ enum REWARD_TYPE {
 	SeedReward = 3,
 	EggReward = 4,
 	HatReward = 5,
-	AccessoryReward = 6,
+	ChaoReward = 6,
+	//AccessoryReward = 7,
 };
 
 enum REQUIREMENT_TYPE
@@ -43,14 +44,16 @@ union RewardValue
 	Al_Animal Animal;
 	ChaoSeed Seed;
 	SA2BHat Hat;
+	eCHAO_EGGS Egg;
 	char* AccessoryName;
 
 	struct RewardChao {
+		char Name[7];
+		eCHAO_TYPE Type;
 		ChaoColor Color;
 		SA2BTexture Texture;
 		ChaoTone Tone;
 		ChaoShiny Shiny;
-		bool Negative;
 	} Chao;
 };
 
@@ -126,7 +129,7 @@ union ValueCheck {
 		ValueCheckType Type;
 
 		union Type {
-			ValueCheckStruct<ChaoType> Type;
+			ValueCheckStruct<ChaoType> ChaoType;
 			ValueCheckStruct<float> SwimFlyInfluence;
 			ValueCheckStruct<float> RunPowerInfluence;
 			ValueCheckStruct<float> Alignment;
@@ -282,3 +285,12 @@ struct ChaoMissions
 	int Amount;
 	ChaoMission* MissionList;
 };
+
+inline void free_or_checks(const ValueCheckPoint& point)
+{
+	if(point.OrCheck != nullptr)
+	{
+		free_or_checks(*point.OrCheck);
+		free(point.OrCheck);
+	}
+}

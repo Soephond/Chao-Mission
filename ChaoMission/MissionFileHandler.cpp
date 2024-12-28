@@ -30,15 +30,16 @@ std::vector<ChaoMission> GetActiveMissions()
 
     for (const auto& entry : GetJsonFiles(MissionActivePath, amount))
     {
-    	jsonDocument jsonData = ReadJsonFromFile(entry.string());
 	    try
 	    {
+	    	jsonDocument jsonData = ReadJsonFromFile(entry.string());
 	    	missions[i] = LoadChaoMissionFromJson(jsonData);
 	    	i++;
 	    }
 	    catch (...)
 	    {
 	    	RemoveMission(entry);
+	    	amount--;
 	    }
         
     }

@@ -95,9 +95,8 @@ void __fastcall Handle_Adoption_Screen(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
 			AL_OdeMenuSetMode(0, 1);
 			PlayMusic("chao_g_iede.adx");
 			ResetMusic();
-			goto LABEL_4;
+			goto LABEL_51;
 		case 1:
-		LABEL_4:
 			if (AL_OdeMenuGetState() == ODE_MENU_STATE_OK)
 			{
 			//LABEL_5:

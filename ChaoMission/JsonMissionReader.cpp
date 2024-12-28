@@ -8,6 +8,8 @@
 #include <typeinfo>
 
 #include "JsonMissionReader.h"
+
+#include "al_helper.h"
 #include "al_mission_structs.h"
 
 
@@ -109,7 +111,7 @@ bool GetEnum(const jsonValue& valueJson, T& value) {
 
 bool HandleReward(REWARD_TYPE type, jsonValue& rewardJson, MissionReward*& reward)
 {
-	jsonValue eggValue;
+	jsonValue value;
 
 	switch (type)
 	{
@@ -187,48 +189,85 @@ bool HandleReward(REWARD_TYPE type, jsonValue& rewardJson, MissionReward*& rewar
 
 		break;
 
-	case EggReward:
+	case ChaoReward:
 
-		if (!(rewardJson.HasMember("Amount") && rewardJson.HasMember("Value"))) {
+		if (!rewardJson.HasMember("Value")) {
 			return false;
 		}
 
-		if (!rewardJson["Amount"].IsNumber()) {
-			return false;
-		}
+		value = rewardJson["Value"];
 
-		eggValue = rewardJson["Value"];
-
-		if (!eggValue.HasMember("Color") || !eggValue.HasMember("Texture") || !eggValue.HasMember("Tone") || !eggValue.HasMember("Shiny") || !eggValue.HasMember("Negative")) {
-			return false;
-		}
-
-		if (!GetEnum<ChaoColor>(eggValue["Color"], reward->Value.Chao.Color))
+		if (value.HasMember("ChaoType"))
 		{
-			return false;
+			if (!GetEnum<eCHAO_TYPE>(value["ChaoType"], reward->Value.Chao.Type))
+			{
+				return false;
+			}
 		}
-
-		if (!GetEnum<SA2BTexture>(eggValue["Texture"], reward->Value.Chao.Texture))
+		else
 		{
-			return false;
+			reward->Value.Chao.Type = eCHAO_TYPE::Child;
 		}
 
-		if (!GetEnum<ChaoTone>(eggValue["Tone"], reward->Value.Chao.Tone))
+		if (value.HasMember("Color"))
 		{
-			return false;
+			if (!GetEnum<ChaoColor>(value["Color"], reward->Value.Chao.Color))
+			{
+				return false;
+			}
 		}
-
-		if (!GetEnum<ChaoShiny>(eggValue["Shiny"], reward->Value.Chao.Shiny))
+		else
 		{
-			return false;
+			reward->Value.Chao.Color = ChaoColor_Normal;
 		}
 
-		if (!eggValue["Negative"].IsBool())
+		if (value.HasMember("Texture"))
 		{
-			return false;
+			if (!GetEnum<SA2BTexture>(value["Texture"], reward->Value.Chao.Texture))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			reward->Value.Chao.Texture = SA2BTexture_None;
 		}
 
-		reward->Value.Chao.Negative = eggValue["Negative"].GetBool();
+		if (value.HasMember("Tone"))
+		{
+			if (!GetEnum<ChaoTone>(value["Tone"], reward->Value.Chao.Tone))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			reward->Value.Chao.Tone = ChaoTone_MonoTone;
+		}
+
+		if (value.HasMember("Shiny"))
+		{
+			if (!GetEnum<ChaoShiny>(value["Shiny"], reward->Value.Chao.Shiny))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			reward->Value.Chao.Shiny = ChaoShiny_None;
+		}
+
+		if(value.HasMember("Name"))
+		{
+			int nameLength = 12;
+			
+			if(!value["Name"].IsString() || (int)value["Name"].GetStringLength() > nameLength)
+			{
+				return false;
+			}
+			
+			EncodeChaoNameFromString(value["Name"].GetString(), reward->Value.Chao.Name, nameLength);
+		}
 
 		break;
 
@@ -251,6 +290,25 @@ bool HandleReward(REWARD_TYPE type, jsonValue& rewardJson, MissionReward*& rewar
 
 		break;
 
+	case EggReward:
+	
+		if (!(rewardJson.HasMember("Amount") && rewardJson.HasMember("Value"))) {
+			return false;
+		}
+
+		if (!rewardJson["Amount"].IsNumber()) {
+			return false;
+		}
+
+		if (!GetEnum<eCHAO_EGGS>(rewardJson["Value"], reward->Value.Egg))
+		{
+			return false;
+		}
+
+		reward->Amount = rewardJson["Amount"].GetInt();
+
+		break;
+
 	default:
 		return false;
 	}
@@ -265,6 +323,12 @@ bool GetVal(jsonValue& valueJson, ValueCheckStruct<T>& value)
 	bool hasMaxValue = valueJson.HasMember("MaxValue");
 	bool hasMinValue = valueJson.HasMember("MinValue");
 	bool hasInverted = valueJson.HasMember("Inverted");
+
+	value.inverted = false;
+	value.range = RangeType_NoRange;
+	value.value = T();
+	value.max = T();
+	value.min = T();
 
 	try
 	{
@@ -378,7 +442,7 @@ bool HandleTypeRequirementValueCheck(jsonValue& checkJson, ValueCheck* check)
 	switch (check->ChaoTypeCheck.Type)
 	{
 	case ChaoTypeCheck:
-		return GetVal<ChaoType>(checkJson, check->ChaoTypeCheck.Check.Type);
+		return GetVal<ChaoType>(checkJson, check->ChaoTypeCheck.Check.ChaoType);
 
 	case SwimFlyInfluenceCheck:
 		return GetVal<float>(checkJson, check->ChaoTypeCheck.Check.SwimFlyInfluence);

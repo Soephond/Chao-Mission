@@ -1,4 +1,5 @@
 #pragma once
+#include "pch.h"
 
 enum CharacterBondOrder {
 	CharacterBond_Sonic = 0,

@@ -2,13 +2,8 @@
 
 #include "sa2modloader.h"
 
-#include <functional>
-
 #include "cwe_api.h"
 #include "al_odekake.h"
-#include "al_ui.h"
-#include "al_chao_home.h"
-#include "chao_data.h"
 #include "al_mission_structs.h"
 
 EXTERN_C_START
@@ -19,7 +14,8 @@ void Load_Mission_Arrows();
 void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork);
 bool Check_Mission_Requirement(MissionRequirement* requirement, CHAO_PARAM_GC* chao);
 bool RequirementsPassed();
-void Give_Mission_Reward(MissionReward* Reward);
+void Give_Mission_Rewards(ChaoMission* mission);
+void UnloadMissions();
 EXTERN_C_END
 
 extern ChaoHudThingB MissionMenu[];

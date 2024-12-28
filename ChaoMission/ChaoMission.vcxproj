@@ -162,6 +162,9 @@
     <ClCompile Include="al_helper.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="al_inv.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="al_mission.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -187,6 +190,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="KCE_Helper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
@@ -201,6 +207,8 @@
     <ClInclude Include="al_blackmarket.h" />
     <ClInclude Include="al_chao_home.h" />
     <ClInclude Include="al_helper.h" />
+    <ClInclude Include="al_inv.h" />
+    <ClInclude Include="al_inv_structs.h" />
     <ClInclude Include="al_mission.h" />
     <ClInclude Include="al_msg.h" />
     <ClInclude Include="al_odekake.h" />
@@ -209,6 +217,7 @@
     <ClInclude Include="file_helper.h" />
     <ClInclude Include="JsonMissionReader.h" />
     <ClInclude Include="chao_data.h" />
+    <ClInclude Include="KCE_Helper.h" />
     <ClInclude Include="MissionFileHandler.h" />
   </ItemGroup>
   <ItemGroup>
