@@ -478,24 +478,32 @@ void Give_Reward(MissionReward*& reward)
         break;
 
     case ChaoReward:
-        //Give chao
+        //Give free chao slot
         CHAO_SAVE_INFO* freeSlot = reinterpret_cast<CHAO_SAVE_INFO*>(GetFreeChaoSlot());
         auto chao = reward->Value.Chao;
-        
+
+        //Set Dna
         AL_GENE gene = {};
         InitChaoDNA(reinterpret_cast<ChaoDNA*>(&gene));
         gene.EggColor = eCHAO_EGGS::Normal;
+        gene.Color[0] = static_cast<eAL_COLOR>(chao.Color);
+        gene.Color[1] = static_cast<eAL_COLOR>(chao.Color);
+        gene.Multi[0] = chao.Shiny;
+        gene.Multi[1] = chao.Shiny;
+        gene.NonTex[0] = chao.Tone;
+        gene.NonTex[1] = chao.Tone;
+        gene.Jewel[0] = static_cast<eCHAO_JEWEL>(chao.Texture);
+        gene.Jewel[1] = static_cast<eCHAO_JEWEL>(chao.Texture);
 
+        //Create Chao
         CreateChaoEgg(&gene, (ChaoData*)freeSlot, false, new NJS_VECTOR{100, 100, 100}, 3);
-        
+
+        //Set Type and Garden
         freeSlot->param.Type = chao.Type;
-        freeSlot->param.body.ColorNum = static_cast<eAL_COLOR>(chao.Color);
-        freeSlot->param.body.MultiNum = chao.Shiny;
-        freeSlot->param.body.NonTex = chao.Tone;
-        freeSlot->param.body.JewelNum = static_cast<eCHAO_JEWEL>(chao.Texture);
         freeSlot->param.place = (eCHAO_GARDENS)LastChaoArea;
-        
-        strncpy_s((char*)&freeSlot->UNDEF1[1571 - offsetof(CHAO_SAVE_INFO, UNDEF1) + 1], 7, chao.Name, _TRUNCATE);
+
+        //Set Name
+        strncpy_s((char*)freeSlot + 1572/*CWE Chao name*/, 7, chao.Name, _TRUNCATE);
         
         break;
     }
