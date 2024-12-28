@@ -831,6 +831,7 @@ void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
             break;
         case 0x5:
             Give_Mission_Rewards(&missions.MissionList[CurrentMission]);
+            ClearMission(missions.MissionList[CurrentMission].Name);
             AL_OdeMenuSetMode(0, 0x6);
             Clear_Screen();
             AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "You have received your reward.", TextLanguage == 0);

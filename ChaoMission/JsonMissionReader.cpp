@@ -1010,3 +1010,16 @@ ChaoMission LoadChaoMissionFromJson(jsonDocument& missionJson) {
 
 	return mission;
 }
+
+std::string GetMissionNameFromJson(jsonValue& missionJson)
+{
+	const char* result;
+	
+	if (!GetMissionName(missionJson, result))
+	{
+		std::cout << "Mission does not contain a name" << std::endl;
+		throw std::runtime_error("Mission does not contain a name");
+	}
+
+	return result;
+}

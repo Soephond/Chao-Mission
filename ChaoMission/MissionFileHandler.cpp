@@ -93,7 +93,7 @@ void SetNewMission()
 	std::filesystem::rename(missionFile, newPath);
 }
 
-std::filesystem::path GetMissionFileByName(std::string missionName)
+std::filesystem::path GetMissionFileByName(const std::string &missionName)
 {
 	//loop through the 4 directories and find the mission file
 	std::filesystem::path path;
@@ -104,18 +104,29 @@ std::filesystem::path GetMissionFileByName(std::string missionName)
 	{
 		for (const auto& entry : std::filesystem::directory_iterator(directory))
 		{
-			if (entry.path().filename() == missionName)
+			try
 			{
-				path = entry.path();
-				break;
+				jsonDocument jsonData = ReadJsonFromFile(entry.path().string());
+				std::string missionNameJson = GetMissionNameFromJson(jsonData);
+				
+				if (missionName == missionNameJson)
+				{
+					path = entry.path();
+					break;
+				}
 			}
+			catch (...)
+			{
+				RemoveMission(entry.path());
+			}
+			
 		}
 	}
 
 	return path;
 }
 
-void ClearMission(std::string missionName)
+void ClearMission(const std::string &missionName)
 {
 	auto missionFile = GetMissionFileByName(missionName);
 

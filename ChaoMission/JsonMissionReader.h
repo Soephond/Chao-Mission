@@ -5,3 +5,4 @@
 
 
 ChaoMission LoadChaoMissionFromJson(jsonDocument& missionJson);
+std::string GetMissionNameFromJson(jsonValue& missionJson);
