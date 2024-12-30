@@ -1,0 +1,157 @@
+{
+	"Name":"Fitting In",
+	"Description":[
+		"\nDear Chao Raiser,",
+		"\nI'm harold, a manager over at the Station Square Hotel. We moved rather recently and Henry, my 13-year-old son, has been struggling with the transition. With the new space, we have decided to adopt him a chao.",
+		"\nHe is an active kid so we would like a chao that can keep up with and help him succeed.",
+		"\nSwimming has been his passion for a long time, and now that he is older, he can join the swim team!",
+		"We would like a physically active chao who could accompany him during training.",
+		"\nHis favorite color is cyan, so I would like to surprise him with a light blue chao.",
+		"\nThank you for taking our commission and we look forward to meeting our new companion.",
+		"\n- Harold and Henry"
+	],
+	"Requirements":[
+		{
+			"Type":"TypeRequirement",
+			"Description":"Adult Swim Chao",
+			"Checks":[
+				[
+					{
+						"Type":"ChaoTypeCheck",
+						"Value":8
+					}
+				],
+				[
+					{
+						"Type":"ChaoTypeCheck",
+						"Value":9
+					}
+				],
+				[
+					{
+						"Type":"ChaoTypeCheck",
+						"Value":10
+					}
+				]
+			]
+		},
+		{
+			"Type":"StatRequirement",
+			"Description":"Lvl 25 Swim",
+			"Checks":[
+				[
+					{
+						"Type":"LevelCheck",
+						"Skill":"ChaoSkill_Swim",
+						"MinValue":25
+					}
+				]
+			]
+		},
+		{
+			"Type":"StatRequirement",
+			"Description":"Lvl 20 Run",
+			"Checks":[
+				[
+					{
+						"Type":"LevelCheck",
+						"Skill":"ChaoSkill_Run",
+						"MinValue":20
+					}
+				]
+			]
+		},
+		{
+			"Type":"StatRequirement",
+			"Description":"Lvl 15 Stamina",
+			"Checks":[
+				[
+					{
+						"Type":"LevelCheck",
+						"Skill":"ChaoSkill_Stamina",
+						"MinValue":15
+					}
+				]
+			]
+		},
+		{
+			"Type":"AppearanceRequirement",
+			"Description":"Seal arms and tail",
+			"Checks":[
+				[
+					{
+						"Type":"AnimalArmsCheck",
+						"Value":1
+					},
+					{
+						"Type":"AnimalTailCheck",
+						"Value":1
+					}
+				],
+				[
+					{
+						"Type":"AnimalArmsCheck",
+						"Value":25
+					},
+					{
+						"Type":"AnimalTailCheck",
+						"Value":25
+					}
+				],
+				[
+					{
+						"Type":"AnimalArmsCheck",
+						"Value":1
+					},
+					{
+						"Type":"AnimalTailCheck",
+						"Value":25
+					}
+				],
+				[
+					{
+						"Type":"AnimalArmsCheck",
+						"Value":25
+					},
+					{
+						"Type":"AnimalTailCheck",
+						"Value":1
+					}
+				]
+			]
+		}
+	],
+	"Rewards":[
+		{
+			"Type":"RingReward",
+			"Amount":25000,
+			"Description":"25.000 Rings"
+		}
+	],
+	"Bonus Requirements":[
+		{
+			"Type":"AppearanceRequirement",
+			"Description":"Monotone Sky Blue Chao",
+			"Checks":[
+				[
+					{
+						"Type":"ColorCheck",
+						"MinValue":4
+					},
+					{
+						"Type":"ToneCheck",
+						"MinValue":1
+					}
+				]
+			]
+		}
+	],
+	"Bonus Rewards":[
+		{
+			"Type":"SeedReward",
+			"Value":0,
+			"Amount":2,
+			"Description":"2 Strong Seed"
+		}
+	]
+}

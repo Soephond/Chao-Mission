@@ -1,0 +1,169 @@
+{
+	"Name":"Chao Farmer",
+	"Description":[
+		"\nHowdy partner,",
+		"\nI've heard that you got some kind of sanctuary for them chao.",
+		"\nWell isn't that convenient, I happen to be a Chao farmer.",
+		"\n Those little critters sure know how to harvest the fruits from the trees.",
+		"\n Only thing I need to figure is how to make them stop eating them.",
+		"\n Say would you happen to have some spare chao?",
+		"\n- Chao farmer Jon"
+	],
+	"Requirements":[
+		{
+			"Type":"TypeRequirement",
+			"Description":"Adult Swim Chao",
+			"Checks":[
+				[
+					{
+						"Type":"ChaoTypeCheck",
+						"Value":8
+					}
+				],
+				[
+					{
+						"Type":"ChaoTypeCheck",
+						"Value":9
+					}
+				],
+				[
+					{
+						"Type":"ChaoTypeCheck",
+						"Value":10
+					}
+				]
+			]
+		},
+		{
+			"Type":"StatRequirement",
+			"Description":"Lvl 10 Power",
+			"Checks":[
+				[
+					{
+						"Type":"LevelCheck",
+						"Skill":"ChaoSkill_Power",
+						"MinValue":10
+					}
+				]
+			]
+		},
+		{
+			"Type":"StatRequirement",
+			"Description":"Lvl 10 Run",
+			"Checks":[
+				[
+					{
+						"Type":"LevelCheck",
+						"Skill":"ChaoSkill_Run",
+						"MinValue":10
+					}
+				]
+			]
+		},
+		{
+			"Type":"StatRequirement",
+			"Description":"Lvl 15 Stamina",
+			"Checks":[
+				[
+					{
+						"Type":"LevelCheck",
+						"Skill":"ChaoSkill_Stamina",
+						"MinValue":15
+					}
+				]
+			]
+		},
+		{
+			"Type":"AppearanceRequirement",
+			"Description":"Gorilla",
+			"Checks":[
+				[
+					{
+						"Type":"AnimalArmsCheck",
+						"Value":8
+					},
+					{
+						"Type":"AnimalLegsCheck",
+						"Value":8
+					},
+					{
+						"Type":"AnimalEarsCheck",
+						"Value":8
+					},
+					{
+						"Type":"AnimalForeheadCheck",
+						"Value":8
+					}
+				],
+				[
+					{
+						"Type":"AnimalArmsCheck",
+						"Value":34
+					},
+					{
+						"Type":"AnimalLegsCheck",
+						"Value":34
+					},
+					{
+						"Type":"AnimalEarsCheck",
+						"Value":34
+					},
+					{
+						"Type":"AnimalForeheadCheck",
+						"Value":34
+					}
+				]
+			]
+		}
+	],
+	"Rewards":[
+		{
+			"Type":"RingReward",
+			"Amount":50,
+			"Description":"50 Rings"
+		},
+		{
+			"Type":"FruitReward",
+			"Amount":1,
+			"Value": "SA2BFruit_HeroFruit",
+			"Description":"1 Hero Fruit"
+		},
+		{
+			"Type":"AnimalReward",
+			"Amount":1,
+			"Value": "Al_Animal_Bear",
+			"Description":"1 Bear"
+		},
+		{
+			"Type":"SeedReward",
+			"Amount":1,
+			"Value": 3,
+			"Description":"1 Dark Seed"
+		},
+		{
+			"Type":"EggReward",
+			"Amount":1,
+			"Value": 57,
+			"Description":"1 Sapphire Egg"
+		},
+		{
+			"Type":"HatReward",
+			"Amount":1,
+			"Value": 6,
+			"Description":"1 Paperbag Hat"
+		},
+		{
+			"Type":"ChaoReward",
+			"Amount":1,
+			"Value": {
+				"ChaoType": 5,
+				"Color": 3,
+				"Texture": "SA2BTexture_PurpleJewel",
+				"Tone": 0,
+				"Shiny": "ChaoShiny_Shiny",
+				"Name": "Flippy"
+			},
+			"Description":"1 Test Chao"
+		}
+	]
+}

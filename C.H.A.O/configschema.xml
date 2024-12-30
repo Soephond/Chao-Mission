@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ConfigSchema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonicretro.org">
+  <Groups>
+    <Group name="Missions" display="Missions">
+      <Property name="AmountActiveMissions" type="int" defaultvalue="5" display= "Allowed Active Missions">
+        <HelpText>The total amount of missions that can be in progress at the same time (Tested at 5. Change at own discretion.)</HelpText>
+      </Property>
+    </Group>
+  </Groups>
+</ConfigSchema>
