@@ -7,6 +7,7 @@
 #include <cstring>
 
 #include "al_chao_home.h"
+#include "al_tex.h"
 #include "chao_data.h"
 #include "MissionFileHandler.h"
 
@@ -14,22 +15,40 @@ ChaoMissions missions;
 std::vector<std::string> MissionScreenText;
 
 ChaoHudThingB MissionMenu[] = {
-    {1, 128, 32, 22.0f / 1024.0f, 297.0f / 1024.0f, 320.0f / 1024.0f, 364.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0}, //text
     {1, 128, 32, 22.0f / 1024.0f, 297.0f / 1024.0f, 320.0f / 1024.0f, 364.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
-    //grey text
-    {1, 40, 40, 410.0f / 1024.0f, 36.0f / 1024.0f, 562.0f / 1024.0f, 188.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0}, //icon
+    //text 0
+    {1, 128, 32, 22.0f / 1024.0f, 297.0f / 1024.0f, 320.0f / 1024.0f, 364.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
+    //grey text 1
+    {1, 40, 40, 410.0f / 1024.0f, 36.0f / 1024.0f, 562.0f / 1024.0f, 188.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
+    //icon 2
     {1, 50, 50, 610.0f / 1024.0f, 30.0f / 1024.0f, 751.0f / 1024.0f, 193.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
-    //icon black and white
+    //icon black and white 3
     {1, 185, 46, 22.0f / 1024.0f, 297.0f / 1024.0f, 320.0f / 1024.0f, 364.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
-    //text titlebar
+    //text titlebar 4
     {1, 52.5, 90, 73.0f / 1024.0f, 756.0f / 1024.0f, 173.0f / 1024.0f, 940.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
-    //left Arrow
+    //left Arrow 5
     {1, 52.5, 90, 215.0f / 1024.0f, 756.0f / 1024.0f, 315.0f / 1024.0f, 940.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
-    //right Arrow
+    //right Arrow 6
     {1, 52.5, 90, 336.0f / 1024.0f, 756.0f / 1024.0f, 436.0f / 1024.0f, 940.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
-    //left Arrow inactive
+    //left Arrow inactive 7
     {1, 52.5, 90, 467.0f / 1024.0f, 756.0f / 1024.0f, 577.0f / 1024.0f, 940.0f / 1024.0f, AL_ODE_CHAO_TEXLIST, 0},
-    //right Arrow inactive
+    //right Arrow inactive 8
+    {1, 77.279f, 76.563f, 0.0f / 356.0f, 0.0f / 359.0f, 77.279f / 356.0f, 76.563f / 359.0f, AL_ODE_CHAO_TEXLIST, 1},
+    //B button 9
+    {1, 77.279f, 76.563f, 0.0f / 356.0f, 91.0f / 359.0f, 77.279f / 356.0f, 167.563f / 359.0f, AL_ODE_CHAO_TEXLIST, 1},
+    //A button 10
+    {1, 77.279f, 76.563f, 0.0f / 356.0f, 181.0f / 359.0f, 77.279f / 356.0f, 257.563f / 359.0f, AL_ODE_CHAO_TEXLIST, 1},
+    //X button 11
+    {1, 77.279f, 76.563f, 0.0f / 356.0f, 273.0f / 359.0f, 77.279f / 356.0f, 349.563f / 359.0f, AL_ODE_CHAO_TEXLIST, 1},
+    //Y button 12
+    {1, 174.412f, 60.191f, 86.000f / 356.0f, 5.000f / 359.0f, 260.412f / 356.0f, 65.191f / 359.0f, AL_ODE_CHAO_TEXLIST, 1},
+    //Back Text 13
+    {1, 269.705f, 60.191f, 86.000f / 356.0f, 96.000f / 359.0f, 355.705f / 356.0f, 156.191f / 359.0f, AL_ODE_CHAO_TEXLIST, 1},
+    //Confirm Text 14
+    {1, 236.934f, 60.191f, 86.000f / 356.0f, 188.000f / 359.0f, 322.934f / 356.0f, 248.191f / 359.0f, AL_ODE_CHAO_TEXLIST, 1},
+    //Submit Text 15
+    {1, 156.818f, 65.566f, 86.000f / 356.0f, 284.000f / 359.0f, 242.818f / 356.0f, 349.566f / 359.0f, AL_ODE_CHAO_TEXLIST, 1}
+    //Skip Text 16
 };
 
 std::string Checkmark = "Cleared";
@@ -337,14 +356,14 @@ void UnloadMissions()
         for (int j = 0; j < mission->Description.AmountOfLines; j++)
         {
             auto line = mission->Description.Lines[j];
-            
+
             free(const_cast<char*>(line));
         }
 
         for (int j = 0; j < mission->Requirements.Amount; j++)
         {
             auto requirement = &mission->Requirements.Requirements[j];
-            
+
             free(const_cast<char*>(requirement->RequirementDescription));
             free(requirement->CheckList.Checks);
             free_or_checks(requirement->CheckList);
@@ -357,12 +376,12 @@ void UnloadMissions()
             free(const_cast<char*>(reward->RewardDescription));
         }
 
-        if(mission->BonusRequirements)
+        if (mission->BonusRequirements)
         {
             for (int j = 0; j < mission->BonusRequirements->Amount; j++)
             {
                 auto requirement = &mission->BonusRequirements->Requirements[j];
-                
+
                 free(const_cast<char*>(requirement->RequirementDescription));
                 free(requirement->CheckList.Checks);
                 free_or_checks(requirement->CheckList);
@@ -378,12 +397,12 @@ void UnloadMissions()
                 free(const_cast<char*>(reward->RewardDescription));
             }
         }
-        
+
         free(const_cast<char*>(mission->Name));
         free(mission->BonusRequirements);
         free(mission->BonusRewards);
     }
-    
+
     missions.Amount = 0;
     free(missions.MissionList);
 }
@@ -482,7 +501,7 @@ void Give_Reward(MissionReward*& reward)
         CHAO_SAVE_INFO* freeSlot = reinterpret_cast<CHAO_SAVE_INFO*>(GetFreeChaoSlot());
         auto chao = reward->Value.Chao;
 
-        //Set Dna
+    //Set Dna
         AL_GENE gene = {};
         InitChaoDNA(reinterpret_cast<ChaoDNA*>(&gene));
         gene.EggColor = eCHAO_EGGS::Normal;
@@ -495,16 +514,16 @@ void Give_Reward(MissionReward*& reward)
         gene.Jewel[0] = static_cast<eCHAO_JEWEL>(chao.Texture);
         gene.Jewel[1] = static_cast<eCHAO_JEWEL>(chao.Texture);
 
-        //Create Chao
+    //Create Chao
         CreateChaoEgg(&gene, (ChaoData*)freeSlot, false, new NJS_VECTOR{100, 100, 100}, 3);
 
-        //Set Type and Garden
+    //Set Type and Garden
         freeSlot->param.Type = chao.Type;
         freeSlot->param.place = (eCHAO_GARDENS)LastChaoArea;
 
-        //Set Name
+    //Set Name
         strncpy_s((char*)freeSlot + 1572/*CWE Chao name*/, 7, chao.Name, _TRUNCATE);
-        
+
         break;
     }
 }
@@ -545,6 +564,35 @@ void Clear_Screen()
     AlMsgWarnRemove();
     AlMsgWarnCreate(93, 126.5, 450, 270.0);
     AlMsgWarnOpen();
+}
+
+void Display_Controls(ObjectMaster* a1)
+{
+    auto DataOfChao = AL_GBAManagerGetChaoData();
+    
+    SetChaoHUDThingBColor(1, 1, 1, 1);
+    if(DataOfChao)
+    {
+        //Draw with submit button
+        DrawChaoHudThingB(&MissionMenu[9], 70, 470, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[13], 125, 467, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[10], 200, 470, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[14], 283, 467, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[11], 350, 470, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[15], 425, 467, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[12], 480, 470, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[16], 530, 469, 100, .3f, .3f, 1, 1);
+    }
+    else
+    {
+        //Draw without submit button
+        DrawChaoHudThingB(&MissionMenu[9], 70, 470, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[13], 125, 467, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[10], 200, 470, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[14], 283, 467, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[12], 330, 470, 100, .3f, .3f, 1, 1);
+        DrawChaoHudThingB(&MissionMenu[16], 380, 469, 100, .3f, .3f, 1, 1);
+    }
 }
 
 void Display_Mission_Arrows(ObjectMaster* a1)
@@ -694,10 +742,30 @@ void Mission_Arrow_Executor(ObjectMaster* a1)
     }
 }
 
+void Controls_Executor(ObjectMaster* a1)
+{
+    ODE_MENU_MASTER_WORK* al_master_data = AL_OdekakeMenuMaster_Data_ptr;
+
+    if (a1->Data1.Entity->Action == 0)
+    {
+        if (al_master_data->EndFlag)
+        {
+            a1->MainSub = DeleteObject_;
+            return;
+        }
+    }
+}
+
 void Load_Mission_Arrows()
 {
     ObjectMaster* a1 = LoadObject(2, "Mission_Arrow_Executor", Mission_Arrow_Executor, LoadObj_Data1);
     a1->DisplaySub_Delayed1 = Display_Mission_Arrows;
+}
+
+void Load_Controls()
+{
+    ObjectMaster* a1 = LoadObject(2, "Controls_Executor", Controls_Executor, LoadObj_Data1);
+    a1->DisplaySub_Delayed1 = Display_Controls;
 }
 
 void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
@@ -721,13 +789,14 @@ void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
             CurrentMission = 0;
             MissionCount = missions.Amount;
             Load_Mission_Arrows();
+            Load_Controls();
             AlMsgWarnCreate(93, 126.5, 450, 270.0);
             AlMsgWarnOpen();
             AL_OdeMenuSetMode(0, 0x1);
             break;
         case 0x1:
             Load_Mission_Text(0, false);
-            
+
             AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, MissionScreenText[0].c_str(),
                              TextLanguage == 0);
             AL_OdeMenuSetMode(0, 0x2);
@@ -768,12 +837,12 @@ void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
             {
                 Load_Mission_Text(CurrentMission, true);
                 AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, MissionScreenText[0].c_str(),
-                             TextLanguage == 0);
+                                 TextLanguage == 0);
             }
             if ((press & Buttons_X) != 0)
             {
                 DataOfChao = AL_GBAManagerGetChaoData();
-                if(DataOfChao)
+                if (DataOfChao)
                 {
                     if (RequirementsPassed())
                     {
@@ -783,7 +852,8 @@ void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
                     {
                         AL_OdeMenuSetMode(0, 0x7);
                         Clear_Screen();
-                        AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "This chao does not yet meet all requirements.", TextLanguage == 0);
+                        AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14,
+                                         "This chao does not yet meet all requirements.", TextLanguage == 0);
                         sub_52FB80();
                     }
                 }
@@ -793,24 +863,26 @@ void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
                 AL_OdeMenuSetMode(0, 0x3);
                 AL_OdekakeMenuMaster_Data_ptr->EndFlag = 1;
             }
-            if ((press & Buttons_Left))
+            if (press & Buttons_Left)
             {
                 if (CurrentMission > 0)
                 {
                     CurrentMission--;
                     Load_Mission_Text(CurrentMission, false);
-                    AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, MissionScreenText[0].c_str(),
-                             TextLanguage == 0);
+                    AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14,
+                                     MissionScreenText[0].c_str(),
+                                     TextLanguage == 0);
                 }
             }
-            if ((press & Buttons_Right))
+            if (press & Buttons_Right)
             {
                 if (CurrentMission < MissionCount - 1)
                 {
                     CurrentMission++;
                     Load_Mission_Text(CurrentMission, false);
-                    AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, MissionScreenText[0].c_str(),
-                             TextLanguage == 0);
+                    AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14,
+                                     MissionScreenText[0].c_str(),
+                                     TextLanguage == 0);
                 }
             }
             break;
@@ -834,8 +906,10 @@ void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
             ClearMission(missions.MissionList[CurrentMission].Name);
             AL_OdeMenuSetMode(0, 0x6);
             Clear_Screen();
-            AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "You have received your reward.", TextLanguage == 0);
-            AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "Thanks for helping people with their chao request.", TextLanguage == 0);
+            AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "You have received your reward.",
+                             TextLanguage == 0);
+            AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14,
+                             "Thanks for helping people with their chao request.", TextLanguage == 0);
             sub_52FB80();
             goto LABEL_RETURN;
         case 0x6:

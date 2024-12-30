@@ -4,9 +4,6 @@
 
 using namespace std;
 
-NJS_TEXNAME AL_ODE_CHAO_TEXNAME[1];
-NJS_TEXLIST AL_ODE_CHAO_TEXLIST[] = { AL_ODE_CHAO_TEXNAME, 1 };
-
 int CalculateReward(CHAO_PARAM_GC* chao)
 {
 	int eggSalePrice = CategoryAttribs[9].attrib[(Uint8)chao->body.EggColor + 0x10].SalePrice / 2;
@@ -45,11 +42,6 @@ int CalculateReward(CHAO_PARAM_GC* chao)
 	}
 
 	return total;
-}
-
-NJS_TEXLIST* GetCHAO_TEXLIST()
-{
-	return AL_ODE_CHAO_TEXLIST;
 }
 
 void __fastcall Handle_CHAO_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)

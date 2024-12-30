@@ -45,27 +45,6 @@ inline void PatchData(T* writeaddress, const T& data)
         *writeaddress = data;
 }
 
-jsonDocument Test(const std::string path)
-{
-    std::ifstream file(path);
-
-    jsonDocument jsonData;
-
-    if (file.is_open())
-    {
-        rapidjson::IStreamWrapper wrapper(file);
-        jsonData.ParseStream(wrapper);
-        file.close();
-    }
-    else
-    {
-        std::cout << "Unable to open file " << path << std::endl;
-        return NULL;
-    }
-
-    return jsonData;
-}
-
 extern "C" {
 //registering data functions. - Needs to exist.
 void (*RegisterDataFunc)(void* ptr);
@@ -74,7 +53,7 @@ void (*RegisterDataFunc)(void* ptr);
 //main CWE Load function -- Important stuff like adding your CWE mod goes here
 void CWELoad(CWE_REGAPI* cwe_api, ObjectMaster* tp)
 {
-    LoadChaoTexlist("ChaoHomeTexList", AL_ODE_CHAO_TEXLIST, 1);
+    LoadChaoTexlist("ChaoHomeTexList", AL_ODE_CHAO_TEXLIST, 2);
     CWE_Loaded = HelperFunctionsGlobal->Mods->find("CWE");
     if (CWE_Loaded) //If CWE is loaded
     {
