@@ -1,4 +1,19 @@
-site_name: My Docs
+site_name: C.H.A.O. Mission Documentation
 site_url: https://mydomain.org/mysite
 theme:
   name: material
+  features:
+    - navigation.sections
+
+markdown_extensions:
+  - def_list
+      
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Json Structure: json-structure.md
+  - Values: values.md
+    
+
+
+  

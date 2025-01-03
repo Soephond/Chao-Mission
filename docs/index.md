@@ -1,17 +1,18 @@
-# Welcome to MkDocs
+# C.H.A.O Mission Documentation
+## Introduction
+Welcome to the C.H.A.O Mission Documentation! 
+This documentation is intended to provide a comprehensive guide for creating
+and understanding the .Json files used for missions.
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+There will be various sections that cover:
 
-## Commands
+- [How to create a mission](getting-started.md)
+- [The structure of the .Json files](json-structure.md)
+- The different types of Requests and Rewards
+- [The different values and what they mean](values.md)
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
 
-## Project layout
+## About
+If you have any questions or have a great idea, let me know in discord: `.soephond`
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+
