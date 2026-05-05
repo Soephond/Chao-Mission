@@ -1,4 +1,4 @@
-# C.H.A.O. Mission Creator — Design Spec
+Pl# C.H.A.O. Mission Creator — Design Spec
 
 **Date:** 2026-05-05  
 **Branch:** feature/Mission_Creator  
@@ -203,6 +203,7 @@ Opened via the gear icon in the header. Contains:
 
 - **SA2 Install Path** — browse button to set/change the path. Required for "Save to Mod Folder".
 - **Enable all checks** — toggle (off by default). Tooltip: *"Enables advanced checks such as character fear, distance, and meet count. Use with caution — these values are less documented."* When off, only the most common check variants are shown per requirement type (e.g. only CharacterLikeCheck for BondRequirement).
+- **Enable Advanced Color Check** — toggle (off by default). Tooltip: *"Shows an Advanced Color Check button on color conditions, allowing you to pick a single exact color instead of a color group. There are hundreds of color variants."*
 
 ---
 
@@ -220,11 +221,44 @@ Check type dropdown with options:
 
 ### AppearanceRequirement
 Check type dropdown with options:
-- **Color** → ChaoColor dropdown
+- **Color** → See Color Check UI below
 - **Tone** → ChaoTone dropdown (MonoTone, TwoTone)
 - **Shiny** → ChaoShiny dropdown (None, Bright, Shiny)
-- **Texture** → SA2BTexture dropdown (None → Moon; CWE textures added when list is supplied)
+- **Texture** → SA2BTexture dropdown (None → Moon; CWE textures added when list is supplied). CWE texture extension point is a separate data file.
 - **Arms / Ears / Forehead / Horn / Legs / Tail / Wings / Face** → Al_Animal dropdown filtered to animals that have the selected body part, grouped: SA2B | SADX via CWE | New CWE
+
+#### Color Check UI
+
+Color data is stored in `C.H.A.O. Mission Creator/chao_colors_reference.json`, which maps every `ChaoColor` enum value to a hex swatch color and one of 16 color groups.
+
+**Default mode (group picker):**
+The dropdown shows 16 named color groups, each with a small hex color swatch:
+
+| Group | Representative hex |
+|---|---|
+| Normal | #A0C8C8 |
+| Red | #FF0000 |
+| Orange | #FF8600 |
+| Yellow | #FFFF00 |
+| Lime Green | #B1FF00 |
+| Green | #009E00 |
+| Powder Blue | #ACF0FF |
+| Sky Blue | #00D6FA |
+| Blue | #4550FF |
+| Dark Blue | #0700F5 |
+| Purple | #BA00FF |
+| Pink | #FF81E8 |
+| White | #FFFFFF |
+| Grey | #959595 |
+| Black | #404040 |
+| Brown | #9E6E00 |
+
+When the user selects a group, `MissionSerializer` expands the selection into **one OR branch per color in that group**, so any shade of that color will pass the check.
+
+**Advanced Color Check mode:**
+Enabled per check row when **"Enable Advanced Color Check"** is on in Settings. The check row shows an `[Advanced Color Check]` button with hover tooltip: *"There are hundreds of color variants. Use this only if you need a very specific color."* Clicking it switches that row to a flat dropdown listing every `ChaoColor` enum entry individually, each with a small hex swatch next to its name. Serializes as a single exact color check (no OR expansion).
+
+**Deserialization:** If all OR branches in a requirement are single ColorChecks whose values all belong to the same group, `MissionSerializer` collapses them back to the group label on load. Otherwise falls back to Advanced mode.
 
 ### StatRequirement
 Check type dropdown:
@@ -291,8 +325,17 @@ Each `RewardCard` has: **Type** dropdown, **Amount** number input, **Description
 
 ---
 
+## Data Files
+
+Bundled with the app under `C.H.A.O. Mission Creator/`:
+
+- **`chao_colors_reference.json`** — maps every `ChaoColor` enum value to a hex swatch color and one of 16 color groups. Hex values sourced from the CWE Color Guide spreadsheet (confirmed values) and CSS named color approximations (remaining entries). Used by `ColorCheck` UI and `MissionSerializer` for group expansion/collapse.
+
+---
+
 ## Future Extensions (not in scope now)
 
 - **Live JSON preview panel:** add a third CSS grid column, bind a `<pre>` to `MissionSerializer.Serialize(model)`. No other changes needed.
 - **Mission list / manager view:** browse Backlog / InProgress / Cleared folders.
 - **Validation:** highlight incomplete requirements or rewards before saving.
+- **CWE texture list:** extend `SA2BTexture` dropdown with full CWE texture names when list is available.
