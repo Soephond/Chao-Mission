@@ -197,6 +197,100 @@ Both dialogs show **Save anyway** and **Go back** buttons.
 
 ---
 
+## Settings Panel
+
+Opened via the gear icon in the header. Contains:
+
+- **SA2 Install Path** — browse button to set/change the path. Required for "Save to Mod Folder".
+- **Enable all checks** — toggle (off by default). Tooltip: *"Enables advanced checks such as character fear, distance, and meet count. Use with caution — these values are less documented."* When off, only the most common check variants are shown per requirement type (e.g. only CharacterLikeCheck for BondRequirement).
+
+---
+
+## Requirement Check UI — Per Type
+
+Each check row is rendered by `CheckRow.razor`. The type dropdown at the top of the row determines which fields appear below it. All checks support a **range mode selector** (Exact / Min / Max / Range) and an **Inverted** toggle unless noted otherwise.
+
+### TypeRequirement
+Check type dropdown with options:
+- **Chao Type** → enum dropdown (ChaoType: Child, Good, Bad, Neutral/Hero/Dark × Normal/Swim/Fly/Run/Power/Chaos, Tails, Knuckles, Amy)
+- **Swim ↔ Fly** → slider −1.0 (Swim) → +1.0 (Fly) with live label (e.g. "Leaning Fly")
+- **Run ↔ Power** → slider −1.0 (Run) → +1.0 (Power) with live label
+- **Alignment** → slider −1.0 (Dark) → +1.0 (Hero) with live label (e.g. "Neutral")
+- **Magnitude** → slider 0.0 → 1.0 with live label (e.g. "Full")
+
+### AppearanceRequirement
+Check type dropdown with options:
+- **Color** → ChaoColor dropdown
+- **Tone** → ChaoTone dropdown (MonoTone, TwoTone)
+- **Shiny** → ChaoShiny dropdown (None, Bright, Shiny)
+- **Texture** → SA2BTexture dropdown (None → Moon; CWE textures added when list is supplied)
+- **Arms / Ears / Forehead / Horn / Legs / Tail / Wings / Face** → Al_Animal dropdown filtered to animals that have the selected body part, grouped: SA2B | SADX via CWE | New CWE
+
+### StatRequirement
+Check type dropdown:
+- **Level** → Skill dropdown (Swim/Fly/Run/Power/Stamina/Luck/Intelligence) + slider 0–99
+- **Grade** → Skill dropdown + ChaoGrade dropdown (E/D/C/B/A/S/X)
+- **Points** → Skill dropdown + slider 0–4000 (Luck/Intelligence cap: 4000; others: 3266)
+- **Happiness** → slider 0–(max short); no skill needed
+
+### AbilityRequirement
+- **Specific Ability (FlagCheck)** → grouped multi-select showing ability name + animal hint:
+  - Swim: Belly Slide (Penguin), Roll Around (Seal), Backstroke (Otter)
+  - Run: Hop Around (Rabbit), Wash Face (Cheetah), Dash (Warthog)
+  - Power: Roar (Bear), Sharpen Nails (Tiger), Pound Chest (Gorilla)
+  - Fly: Strut (Peacock), Whistle (Parrot), Sit-ups (Condor)
+  - Other: Fart (Skunk), Somersault (Sheep), Hum (Raccoon), Fiery Chao Ball (Half Fish), Lose All Parts (Skeleton Dog), Lose Legs (Bat), Breathe Fire (Dragon), Buck Feet (Unicorn), Wag Tail (Phoenix)
+  - Selected abilities OR'd into `__int16` bitmask
+- **Total Abilities (TotalCheck)** → slider 0–21
+
+### ToyRequirement
+- **Specific Toy (FlagCheck)** → multi-select: Rattle, Car, Picture Book, Sonic Doll, Broomstick, Pogo Stick, Crayons, Bubble Wand, Shovel, Watering Can
+- **Total Toys (TotalCheck)** → slider 0–10
+
+### ClassesRequirement
+- **Specific Class (FlagCheck)** → grouped multi-select:
+  - Drawing: Level 1–5
+  - Dance: Shake, Spin, Step, Go-Go
+  - Other: Exercise
+  - Song: Level 1–5
+  - Instruments: Bell, Castanets, Cymbals, Drum, Flute, Maracas, Trumpet, Tambourine
+- **Total Classes (TotalCheck)** → slider 0–23
+
+### RaceRequirement
+- **Specific Medal (FlagCheck)** → multi-select: Challenge, Beginner, Hero, Dark, Aquamarine, Topaz, Peridot, Garnet, Onyx, Diamond, Pearl, Amethyst, Emerald, Ruby, Sapphire
+- **Total Medals (TotalCheck)** → slider 0–15
+
+### KarateRequirement
+- **Rank (KarateRankCheck)** → dropdown: No Rank, 10th–1st Kyu, 1st–9th Degree, Grand Master
+- **Matches Won (AmountWonCheck)** → number input
+
+### LifetimeRequirement
+- **Age (AgeCheck)** → number input
+- **Reincarnations (ReincarnationsCheck)** → number input
+
+### BondRequirement
+- **Character** dropdown always shown first: Sonic, Shadow, Tails, Eggman, Knuckles, Rouge
+- **Like (CharacterLikeCheck)** → slider −100 (Hates) → +100 (Loves) with live label — always available
+- **Fear / Distance / Meet** → hidden unless "Enable all checks" is on in Settings; number inputs
+
+---
+
+## Reward Card UI — Per Type
+
+Each `RewardCard` has: **Type** dropdown, **Amount** number input, **Description** text field, and a type-specific **Value** picker.
+
+| Type | Value picker |
+|---|---|
+| RingReward | No value field |
+| FruitReward | SA2BFruit dropdown (flat, 24 entries) |
+| AnimalReward | Al_Animal grouped dropdown: SA2B (21) \| SADX via CWE (15: Mole, Koala, CWE variants) \| New CWE (3: Bee, Ladybug, Scorpion) |
+| SeedReward | ChaoSeed dropdown: Strong, Tasty, Hero, Dark, Round, Triangle, Square |
+| EggReward | eCHAO_EGGS grouped dropdown: Normal \| MonoTone (13) \| TwoTone (13) \| Shiny Normal \| Shiny MonoTone (13) \| Shiny TwoTone (13) \| Jewel/Special (Gold, Silver, Ruby, Sapphire, Emerald, Amethyst, Aquamarine, Garnet, Onyx, Peridot, Topaz, Pearl, Metal1, Metal2, Glass) |
+| HatReward | SA2BHat grouped dropdown: Named Hats (Pumpkin, Skull, Apple, Bucket, Empty Can, Cardboard Box, Flower Pot, Paper Bag, Pan, Stump, Watermelon, Red/Blue/Black Wool Beanie, Pacifier) \| EggShell variants (MonoTone, TwoTone, Shiny MonoTone, Shiny TwoTone, Jewel) |
+| ChaoReward | Expanded inline fields: Name (text, max 12 chars), ChaoType dropdown, Color dropdown, Texture dropdown, Tone dropdown, Shiny dropdown |
+
+---
+
 ## Future Extensions (not in scope now)
 
 - **Live JSON preview panel:** add a third CSS grid column, bind a `<pre>` to `MissionSerializer.Serialize(model)`. No other changes needed.
