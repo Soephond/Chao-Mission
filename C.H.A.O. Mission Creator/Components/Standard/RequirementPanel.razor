@@ -1,7 +1,13 @@
 <div class="panel-col">
     <div class="panel-header">
         <span>Requirements</span>
-        <button class="btn btn-primary" style="font-size:11px;padding:3px 10px" @onclick="AddRequirement">+ Add</button>
+        <div style="display:flex;gap:6px">
+            @if (OnAddPair.HasDelegate)
+            {
+                <button class="btn btn-secondary" style="font-size:11px;padding:3px 10px" @onclick="OnAddPair">+ Add Pair</button>
+            }
+            <button class="btn btn-primary" style="font-size:11px;padding:3px 10px" @onclick="AddRequirement">+ Add</button>
+        </div>
     </div>
     <div class="panel-scroll">
         @foreach (var req in Requirements)
@@ -16,6 +22,8 @@
 @code {
     [Parameter] public List<RequirementModel> Requirements { get; set; } = new();
     [Parameter] public EventCallback OnChanged { get; set; }
+    /// <summary>When set, shows an "Add Pair" button that adds one entry to both requirement and reward lists simultaneously.</summary>
+    [Parameter] public EventCallback OnAddPair { get; set; }
 
     private void AddRequirement()
     {

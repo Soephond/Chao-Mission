@@ -1,11 +1,8 @@
-<div style="display:flex;flex-direction:column;flex:1;overflow:hidden">
-    <div class="tab-content" style="flex:1">
-        <RequirementPanel Requirements="BonusRequirements" OnChanged="OnChanged" />
-        <RewardPanel Rewards="BonusRewards" OnChanged="OnChanged" />
-    </div>
-    <div style="padding:8px 12px;border-top:1px solid #2a2a4a;flex-shrink:0">
-        <button class="btn btn-secondary" @onclick="AddBonus">+ Add Bonus Pair</button>
-    </div>
+<div class="tab-content">
+    <RequirementPanel Requirements="BonusRequirements"
+                      OnChanged="OnChanged"
+                      OnAddPair="AddBonus" />
+    <RewardPanel Rewards="BonusRewards" OnChanged="OnChanged" />
 </div>
 
 @code {
