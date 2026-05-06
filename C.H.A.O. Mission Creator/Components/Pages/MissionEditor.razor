@@ -1,0 +1,108 @@
+@page "/"
+@inject AppSettingsService Settings
+@inject MissionFileService FileService
+
+<div class="main-area">
+    <MissionInfo Model="_model"
+                 OnChanged="StateHasChanged"
+                 OnStatusChanged="msg => SetStatus(msg ?? string.Empty)" />
+
+    <EditorTabs Model="_model" OnChanged="StateHasChanged" />
+
+    <SaveBar OnSaveToMod="SaveToModAsync"
+             OnSaveAs="SaveAsAsync"
+             StatusText="@_statusText"
+             StatusClass="@_statusClass" />
+</div>
+
+@if (_confirmMessage is not null)
+{
+    <ConfirmDialog Message="@_confirmMessage"
+                   OnConfirm="ExecutePendingSave"
+                   OnCancel="CancelSave" />
+}
+
+@code {
+    private readonly MissionEditorModel _model = new();
+    private string _statusText  = "Ready";
+    private string _statusClass = string.Empty;
+    private string? _confirmMessage;
+    private Func<Task>? _pendingSaveAction;
+
+    private async Task SaveToModAsync()
+    {
+        if (!CheckBonusMismatch(out var msg))  { await DoSaveToModAsync(); return; }
+        _confirmMessage    = msg;
+        _pendingSaveAction = DoSaveToModAsync;
+        StateHasChanged();
+    }
+
+    private async Task SaveAsAsync()
+    {
+        if (!CheckBonusMismatch(out var msg))  { await DoSaveAsAsync(); return; }
+        _confirmMessage    = msg;
+        _pendingSaveAction = DoSaveAsAsync;
+        StateHasChanged();
+    }
+
+    private async Task DoSaveToModAsync()
+    {
+        CancelSave();
+        if (string.IsNullOrWhiteSpace(Settings.Sa2Path))
+        {
+            SetStatus("SA2 path not configured — open Settings (⚙) to set it.", "status-err");
+            return;
+        }
+        try
+        {
+            var path = await FileService.SaveToBacklogAsync(_model, Settings.Sa2Path);
+            SetStatus($"Saved to Backlog: {path}", "status-ok");
+        }
+        catch (Exception ex) { SetStatus($"Save failed: {ex.Message}", "status-err"); }
+    }
+
+    private async Task DoSaveAsAsync()
+    {
+        CancelSave();
+        try
+        {
+            var path = await FileService.SaveAsAsync(_model);
+            SetStatus(path is null ? "Save cancelled." : $"Saved: {path}",
+                      path is null ? string.Empty : "status-ok");
+        }
+        catch (Exception ex) { SetStatus($"Save failed: {ex.Message}", "status-err"); }
+    }
+
+    private async Task ExecutePendingSave()
+    {
+        if (_pendingSaveAction is not null) await _pendingSaveAction();
+    }
+
+    private void CancelSave()
+    {
+        _confirmMessage    = null;
+        _pendingSaveAction = null;
+        StateHasChanged();
+    }
+
+    private bool CheckBonusMismatch(out string message)
+    {
+        var rCount = _model.BonusRequirements.Count;
+        var wCount = _model.BonusRewards.Count;
+
+        if (rCount == wCount) { message = string.Empty; return false; }
+
+        message = rCount > wCount
+            ? $"You have more bonus requirements than bonus rewards. Players who clear all {rCount} bonus requirements will only receive {wCount} bonus rewards — the extra cleared requirements won't grant anything. Make sure the number of bonus requirements and bonus rewards are equal. Save anyway?"
+            : $"Only {rCount} of the {wCount} bonus rewards can be given out — there aren't enough bonus requirements to unlock the rest. Make sure the number of bonus requirements and bonus rewards are equal. Save anyway?";
+
+        return true;
+    }
+
+    private void SetStatus(string text, string cssClass = "")
+    {
+        _statusText  = text;
+        _statusClass = cssClass;
+        StateHasChanged();
+    }
+}

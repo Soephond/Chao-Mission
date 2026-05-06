@@ -89,7 +89,7 @@ html, body, #app {
     padding: 0 16px;
     background: #0f0f23;
     border-top: 1px solid #2a2a4a;
-    grid-column: 2;
+    grid-column: 1 / -1;
 }
 .save-bar .status { flex: 1; font-size: 12px; color: #7878a0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .status-ok { color: #50a050 !important; }

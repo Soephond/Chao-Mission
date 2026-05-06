@@ -17,7 +17,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("C.H.A.O. Mission Creator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+72da9e8559e0b17ff142e6e88e82e8d1b39bb369")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+90cf73d5c67ff01c26305d9c8698bb3ea447ac92")]
 [assembly: System.Reflection.AssemblyProductAttribute("C.H.A.O. Mission Creator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("C.H.A.O. Mission Creator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

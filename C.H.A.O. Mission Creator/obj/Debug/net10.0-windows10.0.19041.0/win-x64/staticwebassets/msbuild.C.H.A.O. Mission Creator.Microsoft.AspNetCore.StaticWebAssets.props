@@ -12,12 +12,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>tlm97taf8u</Fingerprint>
-      <Integrity>T8okCcCttK2/koeHP2Jpf9+TzN2ztEF+o2gkj9rXOkU=</Integrity>
+      <Fingerprint>oqzka86g6d</Fingerprint>
+      <Integrity>8LvMXIS9mqJHc0OsKi+wHaexdOfDVIcKHlfzlGR4CF4=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>10199</FileLength>
-      <LastWriteTime>Wed, 06 May 2026 19:18:34 GMT</LastWriteTime>
+      <FileLength>10204</FileLength>
+      <LastWriteTime>Wed, 06 May 2026 21:39:40 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\app.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\C.H.A.O. Mission Creator.styles.css'))">
