@@ -16,24 +16,34 @@ public class ColorReferenceService
         using var doc = await JsonDocument.ParseAsync(stream);
 
         _entries = new List<ColorEntry>();
-        foreach (var el in doc.RootElement.GetProperty("colors").EnumerateArray())
-        {
-            var groupName = ColorGroupNameExtensions.FromDisplayName(el.GetProperty("group").GetString()!);
-            _entries.Add(new ColorEntry(
-                el.GetProperty("enum_name").GetString()!,
-                el.GetProperty("value").GetInt32(),
-                el.GetProperty("hex").GetString()!,
-                groupName
-            ));
-        }
+        _groups  = new List<ColorGroup>();
 
-        _groups = Enum.GetValues<ColorGroupName>()
-            .Select(g => new ColorGroup(g, _entries.Where(e => e.Group == g).ToList()))
-            .Where(g => g.Colors.Count > 0)
-            .ToList();
+        // JSON structure: { "GroupName": { "hex": "#...", "colors": [ { "name": "...", "value": 0, "hex": "#..." } ] } }
+        foreach (var groupProp in doc.RootElement.EnumerateObject())
+        {
+            ColorGroupName groupName;
+            try { groupName = ColorGroupNameExtensions.FromDisplayName(groupProp.Name); }
+            catch { continue; } // skip unknown groups
+
+            var groupColors = new List<ColorEntry>();
+
+            foreach (var colorEl in groupProp.Value.GetProperty("colors").EnumerateArray())
+            {
+                var colorName = colorEl.GetProperty("name").GetString()!;
+                var enumName  = $"{JsonKeys.ColorPrefix}{colorName}";
+                var value     = colorEl.GetProperty("value").GetInt32();
+                var hex       = colorEl.GetProperty("hex").GetString()!;
+
+                var entry = new ColorEntry(enumName, value, hex, groupName);
+                groupColors.Add(entry);
+                _entries.Add(entry);
+            }
+
+            _groups.Add(new ColorGroup(groupName, groupColors));
+        }
     }
 
-    public IReadOnlyList<ColorGroup> Groups => _groups ?? [];
+    public IReadOnlyList<ColorGroup> Groups    => _groups  ?? [];
     public IReadOnlyList<ColorEntry> AllColors => _entries ?? [];
 
     public ColorGroupName? GetGroupForEnum(string enumName) =>

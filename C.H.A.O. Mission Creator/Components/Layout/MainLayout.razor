@@ -8,7 +8,17 @@
         <button class="icon-btn" @onclick="ToggleSettings" title="Settings">&#x2699;</button>
     </header>
 
-    @Body
+    @if (_initError is not null)
+    {
+        <div style="padding:24px;color:#c05050;font-family:monospace;white-space:pre-wrap;overflow:auto">
+            <strong>Startup error — check this to report a bug:</strong>
+            @_initError
+        </div>
+    }
+    else
+    {
+        @Body
+    }
 
     @if (_showSettings)
     {
@@ -19,11 +29,19 @@
 
 @code {
     private bool _showSettings;
+    private string? _initError;
 
     protected override async Task OnInitializedAsync()
     {
-        await Settings.LoadAsync();
-        await ColorSvc.EnsureLoadedAsync();
+        try
+        {
+            await Settings.LoadAsync();
+            await ColorSvc.EnsureLoadedAsync();
+        }
+        catch (Exception ex)
+        {
+            _initError = $"{ex.GetType().Name}: {ex.Message}\n\n{ex.StackTrace}";
+        }
     }
 
     private void ToggleSettings() => _showSettings = !_showSettings;
