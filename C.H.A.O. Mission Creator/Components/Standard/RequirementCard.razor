@@ -1,0 +1,68 @@
+<div class="card">
+    <div class="card-header">
+        <select value="@((int)Requirement.Type)" @onchange="OnTypeChanged" style="flex:1">
+            @foreach (RequirementType t in Enum.GetValues<RequirementType>())
+            {
+                <option value="@((int)t)">@t.ToString().Replace("Requirement", string.Empty)</option>
+            }
+        </select>
+        <button class="btn-danger" @onclick="() => OnRemove.InvokeAsync(Requirement)">&#x2715;</button>
+    </div>
+
+    <div style="margin-bottom:8px">
+        <input type="text" placeholder="Description" style="width:100%;background:#0f0f23;border:1px solid #2a2a4a;border-radius:4px;color:#e0e0f0;padding:5px 8px"
+               value="@Requirement.Description"
+               @onchange="e => { Requirement.Description = e.Value?.ToString() ?? string.Empty; OnChanged.InvokeAsync(); }" />
+    </div>
+
+    @for (int i = 0; i < Requirement.Checks.Count; i++)
+    {
+        var branchIdx = i;
+        @if (branchIdx > 0)
+        {
+            <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
+                <div class="or-separator" style="flex:1">— OR —</div>
+                @if (Requirement.Checks.Count > 1)
+                {
+                    <button class="btn-danger" style="font-size:11px"
+                            @onclick="() => RemoveBranch(branchIdx)">Remove branch</button>
+                }
+            </div>
+        }
+        <OrBranch Checks="Requirement.Checks[branchIdx]"
+                  RequirementType="Requirement.Type"
+                  OnChanged="OnChanged"
+                  OnRemove="() => RemoveBranch(branchIdx)" />
+    }
+
+    <button class="btn-add" style="margin-top:6px" @onclick="AddBranch">+ Add OR branch</button>
+</div>
+
+@code {
+    [Parameter] public RequirementModel Requirement { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+    [Parameter] public EventCallback<RequirementModel> OnRemove { get; set; }
+
+    private void OnTypeChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var intVal) &&
+            Enum.IsDefined(typeof(RequirementType), intVal))
+        {
+            Requirement.Type = (RequirementType)intVal;
+            Requirement.Checks = new() { new() { new CheckModel() } };
+            OnChanged.InvokeAsync();
+        }
+    }
+
+    private void AddBranch()
+    {
+        Requirement.Checks.Add(new() { new CheckModel() });
+        OnChanged.InvokeAsync();
+    }
+
+    private void RemoveBranch(int idx)
+    {
+        if (Requirement.Checks.Count > 1) Requirement.Checks.RemoveAt(idx);
+        OnChanged.InvokeAsync();
+    }
+}

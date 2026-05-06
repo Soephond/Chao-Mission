@@ -43,4 +43,8 @@ internal static class JsonKeys
     public const string ColorPrefix        = "ChaoColor_";
     public const string AnimalPrefix       = "Al_Animal_";
     public const string KarateRankPrefix   = "KarateRank_";
+    public const string FruitPrefix        = "SA2BFruit_";
+    public const string SeedPrefix         = "ChaoSeed_";
+    public const string HatPrefix          = "SA2BHat_";
+    // eCHAO_EGGS is enum class — magic_enum returns bare member name ("Normal", "Gold"), no prefix
 }

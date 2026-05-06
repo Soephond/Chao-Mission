@@ -1,0 +1,45 @@
+<div class="or-branch">
+    @for (int i = 0; i < Checks.Count; i++)
+    {
+        var idx = i;
+        <CheckRow Check="Checks[idx]"
+                  RequirementType="RequirementType"
+                  OnChanged="_ => OnChanged.InvokeAsync()"
+                  OnRemove="_ => RemoveCheck(idx)" />
+    }
+    <button class="btn-add" @onclick="AddCheck">+ Add condition</button>
+</div>
+
+@code {
+    [Parameter] public List<CheckModel> Checks { get; set; } = new();
+    [Parameter] public RequirementType RequirementType { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+    [Parameter] public EventCallback OnRemove { get; set; }
+
+    private ValueCheckType DefaultCheckType => RequirementType switch
+    {
+        RequirementType.TypeRequirement       => ValueCheckType.ChaoTypeCheck,
+        RequirementType.StatRequirement       => ValueCheckType.LevelCheck,
+        RequirementType.AppearanceRequirement => ValueCheckType.ColorCheck,
+        RequirementType.AbilityRequirement    => ValueCheckType.FlagCheck,
+        RequirementType.ToyRequirement        => ValueCheckType.FlagCheck,
+        RequirementType.ClassesRequirement    => ValueCheckType.FlagCheck,
+        RequirementType.RaceRequirement       => ValueCheckType.FlagCheck,
+        RequirementType.KarateRequirement     => ValueCheckType.KarateRankCheck,
+        RequirementType.LifetimeRequirement   => ValueCheckType.AgeCheck,
+        RequirementType.BondRequirement       => ValueCheckType.CharacterLikeCheck,
+        _ => ValueCheckType.ChaoTypeCheck,
+    };
+
+    private void AddCheck()
+    {
+        Checks.Add(new CheckModel { CheckType = DefaultCheckType });
+        OnChanged.InvokeAsync();
+    }
+
+    private void RemoveCheck(int idx)
+    {
+        if (Checks.Count > 1) Checks.RemoveAt(idx);
+        OnChanged.InvokeAsync();
+    }
+}

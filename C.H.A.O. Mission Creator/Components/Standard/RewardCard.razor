@@ -1,0 +1,184 @@
+@inject ColorReferenceService ColorSvc
+
+<div class="card">
+    <div class="card-header">
+        <select value="@((int)Reward.Type)" @onchange="OnTypeChanged" style="width:140px">
+            @foreach (RewardType t in Enum.GetValues<RewardType>())
+            {
+                <option value="@((int)t)">@t.ToString().Replace("Reward", string.Empty)</option>
+            }
+        </select>
+        @if (Reward.Type != RewardType.ChaoReward)
+        {
+            <input type="number" min="1" value="@Reward.Amount" style="width:60px;background:#0f0f23;border:1px solid #2a2a4a;border-radius:4px;color:#e0e0f0;padding:4px 6px"
+                   @onchange="e => { Reward.Amount = int.TryParse(e.Value?.ToString(), out var v) ? v : 1; OnChanged.InvokeAsync(); }" />
+        }
+        <button class="btn-danger" @onclick="() => OnRemove.InvokeAsync(Reward)">&#x2715;</button>
+    </div>
+
+    <div style="margin-bottom:8px">
+        <input type="text" placeholder="Description" style="width:100%;background:#0f0f23;border:1px solid #2a2a4a;border-radius:4px;color:#e0e0f0;padding:5px 8px"
+               value="@Reward.Description"
+               @onchange="e => { Reward.Description = e.Value?.ToString() ?? string.Empty; OnChanged.InvokeAsync(); }" />
+    </div>
+
+    @switch (Reward.Type)
+    {
+        case RewardType.RingReward:
+            break;
+
+        case RewardType.FruitReward:
+            <select value="@(Reward.EnumValue ?? $"{JsonKeys.FruitPrefix}{SA2BFruit.ChaoGardenFruit}")"
+                    @onchange="e => { Reward.EnumValue = e.Value?.ToString(); OnChanged.InvokeAsync(); }">
+                @foreach (SA2BFruit f in Enum.GetValues<SA2BFruit>().Where(f => f != SA2BFruit.None))
+                {
+                    <option value="@($"{JsonKeys.FruitPrefix}{f}")">@f.ToString().Replace("_", " ")</option>
+                }
+            </select>
+            break;
+
+        case RewardType.AnimalReward:
+            <select value="@(Reward.EnumValue ?? $"{JsonKeys.AnimalPrefix}{ModelDefaults.DefaultAnimal}")"
+                    @onchange="e => { Reward.EnumValue = e.Value?.ToString(); OnChanged.InvokeAsync(); }">
+                <optgroup label="SA2B">
+                    @foreach (var a in Sa2bAnimals)
+                    {
+                        <option value="@($"{JsonKeys.AnimalPrefix}{a}")">@a.ToString()</option>
+                    }
+                </optgroup>
+                <optgroup label="SADX via CWE">
+                    @foreach (var a in CweAnimals)
+                    {
+                        <option value="@($"{JsonKeys.AnimalPrefix}{a}")">@a.ToString().Replace("CWE_", string.Empty)</option>
+                    }
+                </optgroup>
+                <optgroup label="New CWE">
+                    @foreach (var a in NewCweAnimals)
+                    {
+                        <option value="@($"{JsonKeys.AnimalPrefix}{a}")">@a.ToString().Replace("CWE_", string.Empty)</option>
+                    }
+                </optgroup>
+            </select>
+            break;
+
+        case RewardType.SeedReward:
+            <select value="@(Reward.EnumValue ?? $"{JsonKeys.SeedPrefix}{ChaoSeed.StrongSeed}")"
+                    @onchange="e => { Reward.EnumValue = e.Value?.ToString(); OnChanged.InvokeAsync(); }">
+                @foreach (ChaoSeed s in Enum.GetValues<ChaoSeed>().Where(s => s != ChaoSeed.None))
+                {
+                    <option value="@($"{JsonKeys.SeedPrefix}{s}")">@s.ToString().Replace("Seed", " Seed")</option>
+                }
+            </select>
+            break;
+
+        case RewardType.EggReward:
+            <select value="@(Reward.EnumValue ?? EChaoEggs.Normal.ToString())"
+                    @onchange="e => { Reward.EnumValue = e.Value?.ToString(); OnChanged.InvokeAsync(); }">
+                @foreach (EChaoEggs eg in Enum.GetValues<EChaoEggs>())
+                {
+                    <option value="@eg.ToString()">@eg.ToString().Replace("_", " ")</option>
+                }
+            </select>
+            break;
+
+        case RewardType.HatReward:
+            <select value="@(Reward.EnumValue ?? $"{JsonKeys.HatPrefix}{SA2BHat.None}")"
+                    @onchange="e => { Reward.EnumValue = e.Value?.ToString(); OnChanged.InvokeAsync(); }">
+                <optgroup label="Named Hats">
+                    @foreach (var h in NamedHats)
+                    {
+                        <option value="@($"{JsonKeys.HatPrefix}{h}")">@h.ToString().Replace("_", " ")</option>
+                    }
+                </optgroup>
+                <optgroup label="EggShell">
+                    @foreach (var h in EggShellHats)
+                    {
+                        <option value="@($"{JsonKeys.HatPrefix}{h}")">@h.ToString().Replace("_", " ")</option>
+                    }
+                </optgroup>
+            </select>
+            break;
+
+        case RewardType.ChaoReward:
+            var cv = Reward.ChaoValue ??= new ChaoRewardValue();
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:center">
+                <span style="font-size:11px;color:#7878a0">Name</span>
+                <input type="text" maxlength="12"
+                       style="background:#0f0f23;border:1px solid #2a2a4a;border-radius:4px;color:#e0e0f0;padding:4px 6px"
+                       value="@cv.Name"
+                       @onchange="e => { cv.Name = e.Value?.ToString() ?? string.Empty; OnChanged.InvokeAsync(); }" />
+
+                <span style="font-size:11px;color:#7878a0">Type</span>
+                <select value="@((int)cv.ChaoType)"
+                        @onchange="e => { if (int.TryParse(e.Value?.ToString(), out var v)) cv.ChaoType = (EChaoType)v; OnChanged.InvokeAsync(); }">
+                    @foreach (EChaoType t in Enum.GetValues<EChaoType>().Where(t => t >= EChaoType.Child))
+                    {
+                        <option value="@((int)t)">@t.ToString().Replace("_", " ")</option>
+                    }
+                </select>
+
+                <span style="font-size:11px;color:#7878a0">Color</span>
+                <select value="@cv.Color"
+                        @onchange="e => { cv.Color = e.Value?.ToString() ?? ModelDefaults.NormalColorEnumName; OnChanged.InvokeAsync(); }">
+                    @foreach (var c in ColorSvc.AllColors)
+                    {
+                        <option value="@c.EnumName">@c.EnumName.Replace(JsonKeys.ColorPrefix, string.Empty)</option>
+                    }
+                </select>
+
+                <span style="font-size:11px;color:#7878a0">Texture</span>
+                <select value="@((int)cv.Texture)"
+                        @onchange="e => { if (int.TryParse(e.Value?.ToString(), out var v)) cv.Texture = (SA2BTexture)v; OnChanged.InvokeAsync(); }">
+                    @foreach (SA2BTexture t in Enum.GetValues<SA2BTexture>())
+                    {
+                        <option value="@((int)t)">@t.ToString()</option>
+                    }
+                </select>
+
+                <span style="font-size:11px;color:#7878a0">Tone</span>
+                <select value="@((int)cv.Tone)"
+                        @onchange="e => { if (int.TryParse(e.Value?.ToString(), out var v)) cv.Tone = (ChaoTone)v; OnChanged.InvokeAsync(); }">
+                    @foreach (ChaoTone t in Enum.GetValues<ChaoTone>())
+                    {
+                        <option value="@((int)t)">@t.ToString()</option>
+                    }
+                </select>
+
+                <span style="font-size:11px;color:#7878a0">Shiny</span>
+                <select value="@((int)cv.Shiny)"
+                        @onchange="e => { if (int.TryParse(e.Value?.ToString(), out var v)) cv.Shiny = (ChaoShiny)v; OnChanged.InvokeAsync(); }">
+                    @foreach (ChaoShiny s in Enum.GetValues<ChaoShiny>())
+                    {
+                        <option value="@((int)s)">@s.ToString()</option>
+                    }
+                </select>
+            </div>
+            break;
+    }
+</div>
+
+@code {
+    [Parameter] public RewardModel Reward { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+    [Parameter] public EventCallback<RewardModel> OnRemove { get; set; }
+
+    private static readonly Al_Animal[] Sa2bAnimals =
+        Enum.GetValues<Al_Animal>().Where(a => a != Al_Animal.None && (int)a <= 20).ToArray();
+    private static readonly Al_Animal[] CweAnimals =
+        Enum.GetValues<Al_Animal>().Where(a => (int)a >= 25 && (int)a <= 39).ToArray();
+    private static readonly Al_Animal[] NewCweAnimals =
+        Enum.GetValues<Al_Animal>().Where(a => (int)a >= 40 && (int)a <= 42).ToArray();
+    private static readonly SA2BHat[] NamedHats =
+        Enum.GetValues<SA2BHat>().Where(h => (int)h <= 15).ToArray();
+    private static readonly SA2BHat[] EggShellHats =
+        Enum.GetValues<SA2BHat>().Where(h => (int)h >= 16).ToArray();
+
+    private void OnTypeChanged(ChangeEventArgs e)
+    {
+        if (!int.TryParse(e.Value?.ToString(), out var intVal)) return;
+        Reward.Type = (RewardType)intVal;
+        Reward.EnumValue = null;
+        Reward.ChaoValue = Reward.Type == RewardType.ChaoReward ? new ChaoRewardValue() : null;
+        OnChanged.InvokeAsync();
+    }
+}
