@@ -12,7 +12,7 @@
     <div class="panel-scroll">
         @foreach (var req in Requirements)
         {
-            <RequirementCard Requirement="req"
+            <RequirementCard @key="req" Requirement="req"
                              OnChanged="OnChanged"
                              OnRemove="r => { Requirements.Remove(r); OnChanged.InvokeAsync(); }" />
         }

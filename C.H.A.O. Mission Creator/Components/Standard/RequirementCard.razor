@@ -18,18 +18,17 @@
     @for (int i = 0; i < Requirement.Checks.Count; i++)
     {
         var branchIdx = i;
+        var branch = Requirement.Checks[branchIdx];
         @if (branchIdx > 0)
         {
             <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
                 <div class="or-separator" style="flex:1">— OR —</div>
-                @if (Requirement.Checks.Count > 1)
-                {
-                    <button class="btn-danger" style="font-size:11px"
-                            @onclick="() => RemoveBranch(branchIdx)">Remove branch</button>
-                }
+                <button class="btn-danger" style="font-size:11px"
+                        @onclick="() => RemoveBranch(branchIdx)">Remove branch</button>
             </div>
         }
-        <OrBranch Checks="Requirement.Checks[branchIdx]"
+        <OrBranch @key="branch"
+                  Checks="branch"
                   RequirementType="Requirement.Type"
                   OnChanged="OnChanged"
                   OnRemove="() => RemoveBranch(branchIdx)" />
@@ -50,6 +49,7 @@
         {
             Requirement.Type = (RequirementType)intVal;
             Requirement.Checks = new() { new() { new CheckModel() } };
+            StateHasChanged();
             OnChanged.InvokeAsync();
         }
     }
@@ -57,12 +57,14 @@
     private void AddBranch()
     {
         Requirement.Checks.Add(new() { new CheckModel() });
+        StateHasChanged();
         OnChanged.InvokeAsync();
     }
 
     private void RemoveBranch(int idx)
     {
         if (Requirement.Checks.Count > 1) Requirement.Checks.RemoveAt(idx);
+        StateHasChanged();
         OnChanged.InvokeAsync();
     }
 }

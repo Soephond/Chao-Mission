@@ -223,6 +223,31 @@ input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-colo
 .dialog-box p { margin-bottom: 16px; line-height: 1.5; }
 .dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
+/* ── Flag groups ───────────────────────────────────────────────────────── */
+.flag-groups { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; padding: 4px 0; }
+.flag-group  { display: flex; flex-direction: column; gap: 4px; }
+.flag-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #6060a0;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #2a2a4a;
+    margin-bottom: 2px;
+}
+.flag-grid { display: grid; grid-template-columns: repeat(3, auto); gap: 4px 14px; }
+.flag-item {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #c0c0e0;
+}
+.flag-item input[type="checkbox"] { width: 13px; height: 13px; flex-shrink: 0; accent-color: #a0c8c8; }
+
 /* ── Sliders ───────────────────────────────────────────────────────────── */
 .slider-row { display: flex; align-items: center; gap: 8px; }
 input[type="range"] { flex: 1; accent-color: #a0c8c8; }

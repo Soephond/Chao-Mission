@@ -2,7 +2,9 @@
     @for (int i = 0; i < Checks.Count; i++)
     {
         var idx = i;
-        <CheckRow Check="Checks[idx]"
+        var check = Checks[idx];
+        <CheckRow @key="check"
+                  Check="check"
                   RequirementType="RequirementType"
                   OnChanged="_ => OnChanged.InvokeAsync()"
                   OnRemove="_ => RemoveCheck(idx)" />
@@ -34,12 +36,14 @@
     private void AddCheck()
     {
         Checks.Add(new CheckModel { CheckType = DefaultCheckType });
+        StateHasChanged();
         OnChanged.InvokeAsync();
     }
 
     private void RemoveCheck(int idx)
     {
         if (Checks.Count > 1) Checks.RemoveAt(idx);
+        StateHasChanged();
         OnChanged.InvokeAsync();
     }
 }

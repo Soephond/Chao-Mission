@@ -490,47 +490,85 @@
     private RenderFragment RenderFlagCheckboxes() => __builder =>
     {
         long current = long.TryParse(Check.Value, out var lv) ? lv : 0;
-        var flags = GetFlagOptions();
+        var groups = GetGroupedFlags();
 
         __builder.OpenElement(0, "div");
-        __builder.AddAttribute(1, "style", "display:flex;flex-wrap:wrap;gap:4px");
+        __builder.AddAttribute(1, "class", "flag-groups");
 
         int seq = 2;
-        foreach (var (lbl, bit) in flags)
+        foreach (var (groupLabel, items) in groups)
         {
-            bool isSet = (current & bit) != 0;
-            long capturedBit = bit;
+            __builder.OpenElement(seq++, "div");
+            __builder.AddAttribute(seq++, "class", "flag-group");
 
-            __builder.OpenElement(seq++, "label");
-            __builder.AddAttribute(seq++, "style", "font-size:11px;display:flex;align-items:center;gap:2px;white-space:nowrap");
-
-            __builder.OpenElement(seq++, "input");
-            __builder.AddAttribute(seq++, "type", "checkbox");
-            __builder.AddAttribute(seq++, "checked", isSet);
-            __builder.AddAttribute(seq++, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+            // Group header (only when multiple named groups exist)
+            if (!string.IsNullOrEmpty(groupLabel))
             {
-                bool chk = (bool)(e.Value ?? false);
-                long prev = long.TryParse(Check.Value, out var p) ? p : 0;
-                Check.Value = (chk ? prev | capturedBit : prev & ~capturedBit).ToString();
-                Check.MinValue = Check.Value; Check.MaxValue = Check.Value;
-                Changed();
-            }));
-            __builder.CloseElement();
+                __builder.OpenElement(seq++, "div");
+                __builder.AddAttribute(seq++, "class", "flag-group-label");
+                __builder.AddContent(seq++, groupLabel);
+                __builder.CloseElement();
+            }
 
-            __builder.AddContent(seq++, lbl);
-            __builder.CloseElement();
+            __builder.OpenElement(seq++, "div");
+            __builder.AddAttribute(seq++, "class", "flag-grid");
+
+            foreach (var (name, bit) in items)
+            {
+                bool isSet = (current & bit) != 0;
+                long capturedBit = bit;
+
+                __builder.OpenElement(seq++, "label");
+                __builder.AddAttribute(seq++, "class", "flag-item");
+
+                __builder.OpenElement(seq++, "input");
+                __builder.AddAttribute(seq++, "type", "checkbox");
+                __builder.AddAttribute(seq++, "checked", isSet);
+                __builder.AddAttribute(seq++, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+                {
+                    bool chk = (bool)(e.Value ?? false);
+                    long prev = long.TryParse(Check.Value, out var p) ? p : 0;
+                    Check.Value = (chk ? prev | capturedBit : prev & ~capturedBit).ToString();
+                    Check.MinValue = Check.Value; Check.MaxValue = Check.Value;
+                    Changed();
+                }));
+                __builder.CloseElement();
+
+                __builder.AddContent(seq++, name);
+                __builder.CloseElement();
+            }
+
+            __builder.CloseElement(); // flag-grid
+            __builder.CloseElement(); // flag-group
         }
 
-        __builder.CloseElement();
+        __builder.CloseElement(); // flag-groups
     };
 
-    private List<(string Label, long Bit)> GetFlagOptions() => RequirementType switch
+    // ── Grouped flag data ────────────────────────────────────────────────
+    // Returns (groupLabel, [(itemName, bitValue)]).
+    // Empty groupLabel = no visible header for that section.
+
+    private List<(string Group, List<(string Name, long Bit)> Items)> GetGroupedFlags() =>
+        RequirementType switch
+        {
+            RequirementType.AbilityRequirement  => new() { ("", FlagsFromEnum<ChaoAbilityFlags>()) },
+            RequirementType.ClassesRequirement  => ClassroomGroups,
+            RequirementType.ToyRequirement      => new() { ("", FlagsFromEnum<ChaoToyFlags>()) },
+            RequirementType.RaceRequirement     => new() { ("", FlagsFromEnum<MedalFlags>()) },
+            _ => new(),
+        };
+
+    private static readonly List<(string, List<(string, long)>)> ClassroomGroups = new()
     {
-        RequirementType.AbilityRequirement  => FlagsFromEnum<ChaoAbilityFlags>(),
-        RequirementType.ToyRequirement      => FlagsFromEnum<ChaoToyFlags>(),
-        RequirementType.ClassesRequirement  => FlagsFromEnum<ChaoClassroomFlags>(),
-        RequirementType.RaceRequirement     => FlagsFromEnum<MedalFlags>(),
-        _ => new(),
+        ("Drawing",     new() { ("Level 1", 1L<<0),  ("Level 2", 1L<<1),  ("Level 3", 1L<<2), ("Level 4", 1L<<3),  ("Level 5", 1L<<4) }),
+        ("Dance",       new() { ("Shake",   1L<<8),  ("Spin",    1L<<9),  ("Step",    1L<<10), ("Go-Go",   1L<<11), ("Exercise",1L<<12) }),
+        ("Song",        new() { ("Level 1", 1L<<16), ("Level 2", 1L<<17), ("Level 3", 1L<<18), ("Level 4", 1L<<19), ("Level 5", 1L<<20) }),
+        ("Instruments", new()
+        {
+            ("Bell",    1L<<24), ("Castanets", 1L<<25), ("Cymbals", 1L<<26), ("Drum",     1L<<27),
+            ("Flute",   1L<<28), ("Maracas",   1L<<29), ("Trumpet", 1L<<30), ("Tambourine",1L<<31),
+        }),
     };
 
     private static List<(string Label, long Bit)> FlagsFromEnum<T>() where T : struct, Enum =>

@@ -6,7 +6,7 @@
     <div class="panel-scroll">
         @foreach (var rew in Rewards)
         {
-            <RewardCard Reward="rew"
+            <RewardCard @key="rew" Reward="rew"
                         OnChanged="OnChanged"
                         OnRemove="r => { Rewards.Remove(r); OnChanged.InvokeAsync(); }" />
         }
