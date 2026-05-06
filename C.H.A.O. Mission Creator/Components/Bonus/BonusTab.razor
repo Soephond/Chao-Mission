@@ -1,0 +1,22 @@
+<div style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+    <div class="tab-content" style="flex:1">
+        <RequirementPanel Requirements="BonusRequirements" OnChanged="OnChanged" />
+        <RewardPanel Rewards="BonusRewards" OnChanged="OnChanged" />
+    </div>
+    <div style="padding:8px 12px;border-top:1px solid #2a2a4a;flex-shrink:0">
+        <button class="btn btn-secondary" @onclick="AddBonus">+ Add Bonus Pair</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<RequirementModel> BonusRequirements { get; set; } = new();
+    [Parameter] public List<RewardModel> BonusRewards { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private void AddBonus()
+    {
+        BonusRequirements.Add(new RequirementModel());
+        BonusRewards.Add(new RewardModel());
+        OnChanged.InvokeAsync();
+    }
+}

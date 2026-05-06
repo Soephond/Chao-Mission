@@ -1,0 +1,25 @@
+<div class="panel-col">
+    <div class="panel-header">
+        <span>Requirements</span>
+        <button class="btn btn-primary" style="font-size:11px;padding:3px 10px" @onclick="AddRequirement">+ Add</button>
+    </div>
+    <div class="panel-scroll">
+        @foreach (var req in Requirements)
+        {
+            <RequirementCard Requirement="req"
+                             OnChanged="OnChanged"
+                             OnRemove="r => { Requirements.Remove(r); OnChanged.InvokeAsync(); }" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<RequirementModel> Requirements { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private void AddRequirement()
+    {
+        Requirements.Add(new RequirementModel());
+        OnChanged.InvokeAsync();
+    }
+}

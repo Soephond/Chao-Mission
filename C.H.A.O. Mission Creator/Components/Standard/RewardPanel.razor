@@ -1,0 +1,25 @@
+<div class="panel-col">
+    <div class="panel-header">
+        <span>Rewards</span>
+        <button class="btn btn-primary" style="font-size:11px;padding:3px 10px" @onclick="AddReward">+ Add</button>
+    </div>
+    <div class="panel-scroll">
+        @foreach (var rew in Rewards)
+        {
+            <RewardCard Reward="rew"
+                        OnChanged="OnChanged"
+                        OnRemove="r => { Rewards.Remove(r); OnChanged.InvokeAsync(); }" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<RewardModel> Rewards { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private void AddReward()
+    {
+        Rewards.Add(new RewardModel());
+        OnChanged.InvokeAsync();
+    }
+}

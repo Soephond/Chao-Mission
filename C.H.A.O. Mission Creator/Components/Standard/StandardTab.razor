@@ -1,0 +1,10 @@
+<div class="tab-content">
+    <RequirementPanel Requirements="Requirements" OnChanged="OnChanged" />
+    <RewardPanel Rewards="Rewards" OnChanged="OnChanged" />
+</div>
+
+@code {
+    [Parameter] public List<RequirementModel> Requirements { get; set; } = new();
+    [Parameter] public List<RewardModel> Rewards { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+}

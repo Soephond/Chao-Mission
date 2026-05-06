@@ -1,0 +1,26 @@
+<div class="right-panel">
+    <div class="tab-bar">
+        <button class="@(_activeTab == 0 ? "active" : string.Empty)" @onclick="() => _activeTab = 0">Standard</button>
+        <button class="@(_activeTab == 1 ? "active" : string.Empty)" @onclick="() => _activeTab = 1">Bonus</button>
+    </div>
+
+    @if (_activeTab == 0)
+    {
+        <StandardTab Requirements="Model.Requirements"
+                     Rewards="Model.Rewards"
+                     OnChanged="OnChanged" />
+    }
+    else
+    {
+        <BonusTab BonusRequirements="Model.BonusRequirements"
+                  BonusRewards="Model.BonusRewards"
+                  OnChanged="OnChanged" />
+    }
+</div>
+
+@code {
+    [Parameter] public MissionEditorModel Model { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private int _activeTab;
+}
