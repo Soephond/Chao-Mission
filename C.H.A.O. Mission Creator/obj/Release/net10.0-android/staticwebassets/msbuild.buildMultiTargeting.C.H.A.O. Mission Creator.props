@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\C.H.A.O. Mission Creator.props" />
+</Project>

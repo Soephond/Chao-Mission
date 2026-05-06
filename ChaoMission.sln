@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChaoMission", "ChaoMission\
 		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B} = {EC0293F5-4BCF-46B2-8133-18CAEA141C5B}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C.H.A.O. Mission Creator", "C.H.A.O. Mission Creator\C.H.A.O. Mission Creator.csproj", "{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -24,6 +26,14 @@ Global
 		{4C2170AD-98C1-4392-BA19-9C0D5B324BDA}.Release|x64.Build.0 = Release|x64
 		{4C2170AD-98C1-4392-BA19-9C0D5B324BDA}.Release|x86.ActiveCfg = Release|Win32
 		{4C2170AD-98C1-4392-BA19-9C0D5B324BDA}.Release|x86.Build.0 = Release|Win32
+		{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}.Debug|x64.Build.0 = Debug|Any CPU
+		{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}.Debug|x86.Build.0 = Debug|Any CPU
+		{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}.Release|x64.ActiveCfg = Release|Any CPU
+		{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}.Release|x64.Build.0 = Release|Any CPU
+		{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}.Release|x86.ActiveCfg = Release|Any CPU
+		{E8B09B5F-AB3D-4870-B2D2-3402F2CD0B07}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

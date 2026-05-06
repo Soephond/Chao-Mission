@@ -55,6 +55,11 @@ Missions are JSON files that move between four directories under `./mods/C.H.A.O
 
 Create a JSON file in `C.H.A.O/Missions/Backlog/`. Required top-level keys: `Name` (string), `Description` (string array), `Requirements` (array), `Rewards` (array). Optional: `Bonus Requirements`, `Bonus Rewards`. See `ChaoFarmer.json` for a complete example with OR-branched requirements and all reward types.
 
+## Knowledge Sources
+
+- **Tehfusion Chao value info** - https://chao.tehfusion.co.uk/chao-hacking/ - main reference for all value information for chao data and the like. Consult this when needing clarification regarding chao data.
+- **Chao Island Wiki** — https://chao-island.com/wiki/Chao_Wiki and https://chao-island.com/wiki/Chao_World_Extended — authoritative reference for all Chao-related game mechanics, stat names, fruit types, animal parts, egg types, race medals, karate ranks, and anything else Chao-specific. Consult this when working on mission requirements, rewards, or any game mechanic terminology
+
 ## Docs
 
 CI deploys MkDocs documentation to GitHub Pages on pushes to `master`. Run `pip install mkdocs-material` and `mkdocs serve` to preview locally.
