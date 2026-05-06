@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets\\index.html"
     },
     {
+      "Id": "C:\\Git\\Chao-Mission\\C.H.A.O. Mission Creator\\wwwroot\\js\\dropzone.js",
+      "PackagePath": "staticwebassets\\js\\dropzone.js"
+    },
+    {
       "Id": "C:\\Git\\Chao-Mission\\C.H.A.O. Mission Creator\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
     },

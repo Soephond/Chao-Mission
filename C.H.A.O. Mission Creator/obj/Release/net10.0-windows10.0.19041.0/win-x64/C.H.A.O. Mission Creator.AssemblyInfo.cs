@@ -11,14 +11,14 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.PackageName", "com.companyname.c.h.a.o.missioncreator")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.PackageName", "com.soephond.chao.missioncreator")]
 [assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.PublisherName", "User Name")]
 [assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.Name", "C.H.A.O. Mission Creator")]
 [assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.Version", "1.0.0.1")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("C.H.A.O. Mission Creator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+cdcb1328a0134cd5a4e8d5b2f171c75beea0dbe0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+bd1993a33ff2a994d7d2a0b311e23a52ee453d8a")]
 [assembly: System.Reflection.AssemblyProductAttribute("C.H.A.O. Mission Creator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("C.H.A.O. Mission Creator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

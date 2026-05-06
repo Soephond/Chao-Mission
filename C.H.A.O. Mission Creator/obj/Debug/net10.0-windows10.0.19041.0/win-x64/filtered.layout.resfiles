@@ -63,6 +63,7 @@ wwwroot\C.H.A.O. Mission Creator.90aan5xnri.bundle.scp.css
 AboutAssets.txt
 wwwroot\app.css
 wwwroot\index.html
+wwwroot\js\dropzone.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
 wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
 wwwroot\_framework\blazor.modules.json

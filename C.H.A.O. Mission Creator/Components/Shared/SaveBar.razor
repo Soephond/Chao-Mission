@@ -1,0 +1,12 @@
+<div class="save-bar">
+    <button class="btn btn-primary" @onclick="OnSaveToMod">Save to Mod Folder</button>
+    <button class="btn btn-secondary" @onclick="OnSaveAs">Save As&#x2026;</button>
+    <span class="status @StatusClass">@StatusText</span>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnSaveToMod { get; set; }
+    [Parameter] public EventCallback OnSaveAs { get; set; }
+    [Parameter] public string StatusText { get; set; } = "Ready";
+    [Parameter] public string StatusClass { get; set; } = "";
+}

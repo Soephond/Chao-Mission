@@ -12,12 +12,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>kmn8zot022</Fingerprint>
-      <Integrity>nFylSeTQ3ygyMJHNscjogfd4BGBCQqZTIkMSWaHaZLQ=</Integrity>
+      <Fingerprint>tlm97taf8u</Fingerprint>
+      <Integrity>T8okCcCttK2/koeHP2Jpf9+TzN2ztEF+o2gkj9rXOkU=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>3782</FileLength>
-      <LastWriteTime>Tue, 05 May 2026 15:06:43 GMT</LastWriteTime>
+      <FileLength>10199</FileLength>
+      <LastWriteTime>Wed, 06 May 2026 19:18:34 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\app.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\C.H.A.O. Mission Creator.styles.css'))">
@@ -52,13 +52,33 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>j9fnffvn3b</Fingerprint>
-      <Integrity>B2hKBCDMh6x2qF3cTKSWi16EIZlC9JWCjMdIFm9g4a8=</Integrity>
+      <Fingerprint>sn2214txyq</Fingerprint>
+      <Integrity>CEX1sJ36y3fDz/8gT2Z5dBGMojRuRbHyaCqMHzjvHqQ=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>908</FileLength>
-      <LastWriteTime>Tue, 05 May 2026 15:06:43 GMT</LastWriteTime>
+      <FileLength>952</FileLength>
+      <LastWriteTime>Wed, 06 May 2026 19:10:37 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\dropzone.js'))">
+      <SourceType>Package</SourceType>
+      <SourceId>C.H.A.O. Mission Creator</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>/</BasePath>
+      <RelativePath>js/dropzone.js</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>3x3kbqpj6p</Fingerprint>
+      <Integrity>KcxhJ5UyQqmG7MPcfgLwGrz4JgVVBo0qBKbLYlTlmz8=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <FileLength>1300</FileLength>
+      <LastWriteTime>Wed, 06 May 2026 19:11:25 GMT</LastWriteTime>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\dropzone.js'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\lib\bootstrap\dist\css\bootstrap.min.css'))">
       <SourceType>Package</SourceType>

@@ -1,0 +1,53 @@
+@inject IJSRuntime JS
+@inject AppSettingsService Settings
+@implements IAsyncDisposable
+
+<div id="@_id" class="drop-zone" @onclick="OnClick">
+    <div>&#x1F4C2; Drop .json here</div>
+    <div style="font-size:12px;margin-top:4px">or click to open</div>
+</div>
+
+@code {
+    [Parameter] public EventCallback<(string FileName, string Content)> OnFilePicked { get; set; }
+
+    private readonly string _id = $"dz-{Guid.NewGuid():N}";
+    private DotNetObjectReference<DropZone>? _ref;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _ref = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("dropzoneInterop.init", _id, _ref);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnFileDropped(string fileName, string content)
+        => await OnFilePicked.InvokeAsync((fileName, content));
+
+    private async Task OnClick()
+    {
+        var picker = new Windows.Storage.Pickers.FileOpenPicker();
+        picker.FileTypeFilter.Add(".json");
+        WinRT.Interop.InitializeWithWindow.Initialize(picker, GetHwnd());
+        var file = await picker.PickSingleFileAsync();
+        if (file is null) return;
+        var content = await Windows.Storage.FileIO.ReadTextAsync(file);
+        await OnFilePicked.InvokeAsync((file.Name, content));
+    }
+
+    private static IntPtr GetHwnd()
+    {
+        var window = Application.Current?.Windows[0];
+        if (window?.Handler?.PlatformView is Microsoft.UI.Xaml.Window w)
+            return WinRT.Interop.WindowNative.GetWindowHandle(w);
+        return IntPtr.Zero;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await JS.InvokeVoidAsync("dropzoneInterop.dispose", _id);
+        _ref?.Dispose();
+    }
+}

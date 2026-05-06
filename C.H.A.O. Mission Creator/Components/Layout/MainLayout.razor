@@ -1,17 +1,30 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
+@inject AppSettingsService Settings
+@inject ColorReferenceService ColorSvc
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+<div class="app-shell">
+    <header class="app-header">
+        <span>&#x2261; C.H.A.O. Mission Creator</span>
+        <button class="icon-btn" @onclick="ToggleSettings" title="Settings">&#x2699;</button>
+    </header>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    @Body
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+    @if (_showSettings)
+    {
+        <div class="settings-overlay" @onclick="ToggleSettings"></div>
+        <SettingsPanel OnClose="ToggleSettings" />
+    }
 </div>
+
+@code {
+    private bool _showSettings;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Settings.LoadAsync();
+        await ColorSvc.EnsureLoadedAsync();
+    }
+
+    private void ToggleSettings() => _showSettings = !_showSettings;
+}

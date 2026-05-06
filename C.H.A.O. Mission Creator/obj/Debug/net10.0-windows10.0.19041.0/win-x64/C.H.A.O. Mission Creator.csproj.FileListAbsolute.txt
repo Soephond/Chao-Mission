@@ -567,3 +567,4 @@ C:\Git\Chao-Mission\C.H.A.O. Mission Creator\obj\Debug\net10.0-windows10.0.19041
 C:\Git\Chao-Mission\C.H.A.O. Mission Creator\obj\Debug\net10.0-windows10.0.19041.0\win-x64\qualifiers.txt
 C:\Git\Chao-Mission\C.H.A.O. Mission Creator\obj\Debug\net10.0-windows10.0.19041.0\win-x64\qualifiers.txt.intermediate
 C:\Git\Chao-Mission\C.H.A.O. Mission Creator\obj\Debug\net10.0-windows10.0.19041.0\win-x64\MultipleQualifiersPerDimensionFound.txt
+C:\Git\Chao-Mission\C.H.A.O. Mission Creator\bin\Debug\net10.0-windows10.0.19041.0\win-x64\wwwroot\js\dropzone.js

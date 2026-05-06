@@ -1,0 +1,69 @@
+@inject AppSettingsService Settings
+
+<div class="settings-panel">
+    <h2>Settings</h2>
+
+    <div class="setting-row">
+        <label>SA2 Install Path</label>
+        <div style="display:flex;gap:6px">
+            <input type="text" style="flex:1;background:#0f0f23;border:1px solid #2a2a4a;border-radius:4px;color:#e0e0f0;padding:6px 8px"
+                   value="@Settings.Sa2Path"
+                   @onchange="e => Settings.Sa2Path = e.Value?.ToString()" />
+            <button class="btn btn-secondary" @onclick="BrowseAsync">Browse</button>
+        </div>
+    </div>
+
+    <div class="setting-row">
+        <div class="toggle-row">
+            <span>Enable all checks</span>
+            <input type="checkbox" checked="@Settings.EnableAllChecks"
+                   title="Enables advanced checks such as character fear, distance, and meet count. Use with caution."
+                   @onchange="e => Settings.EnableAllChecks = (bool)(e.Value ?? false)" />
+        </div>
+    </div>
+
+    <div class="setting-row">
+        <div class="toggle-row">
+            <span>Enable Advanced Color Check</span>
+            <input type="checkbox" checked="@Settings.EnableAdvancedColorCheck"
+                   title="Shows an Advanced Color Check button, allowing you to pick a single exact color instead of a color group."
+                   @onchange="e => Settings.EnableAdvancedColorCheck = (bool)(e.Value ?? false)" />
+        </div>
+    </div>
+
+    <div style="margin-top:auto;display:flex;gap:8px;padding-top:16px">
+        <button class="btn btn-primary" @onclick="SaveAndCloseAsync">Save</button>
+        <button class="btn btn-secondary" @onclick="OnClose">Cancel</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private async Task BrowseAsync()
+    {
+        var picker = new Windows.Storage.Pickers.FolderPicker();
+        picker.FileTypeFilter.Add("*");
+        WinRT.Interop.InitializeWithWindow.Initialize(picker, GetHwnd());
+        var folder = await picker.PickSingleFolderAsync();
+        if (folder is not null)
+        {
+            Settings.Sa2Path = folder.Path;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SaveAndCloseAsync()
+    {
+        await Settings.SaveAsync();
+        await OnClose.InvokeAsync();
+    }
+
+    private static IntPtr GetHwnd()
+    {
+        var window = Application.Current?.Windows[0];
+        if (window?.Handler?.PlatformView is Microsoft.UI.Xaml.Window w)
+            return WinRT.Interop.WindowNative.GetWindowHandle(w);
+        return IntPtr.Zero;
+    }
+}

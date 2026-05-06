@@ -1,0 +1,15 @@
+<div class="dialog-overlay">
+    <div class="dialog-box">
+        <p>@Message</p>
+        <div class="dialog-actions">
+            <button class="btn btn-secondary" @onclick="OnCancel">Go back</button>
+            <button class="btn btn-primary" @onclick="OnConfirm">Save anyway</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Message { get; set; } = "";
+    [Parameter] public EventCallback OnConfirm { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+}

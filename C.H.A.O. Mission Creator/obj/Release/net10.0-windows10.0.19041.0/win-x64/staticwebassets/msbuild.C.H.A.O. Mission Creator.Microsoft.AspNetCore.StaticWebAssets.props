@@ -32,12 +32,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ApplicationBundle</AssetTraitValue>
-      <Fingerprint>8cg6sp3ll6</Fingerprint>
-      <Integrity>OKjRQY3QXWBAWSO5RCWp4+1nBfp90ktViOxPOJIkThA=</Integrity>
+      <Fingerprint>90aan5xnri</Fingerprint>
+      <Integrity>KczFHser+MoigpCWUfhfn3/lGRxU3YlY4sfmvCS86bA=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>5439</FileLength>
-      <LastWriteTime>Tue, 05 May 2026 15:07:30 GMT</LastWriteTime>
+      <FileLength>1736</FileLength>
+      <LastWriteTime>Wed, 06 May 2026 17:13:55 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\C.H.A.O. Mission Creator.styles.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))">
