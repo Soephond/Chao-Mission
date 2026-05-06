@@ -1,5 +1,57 @@
 namespace C.H.A.O._Mission_Creator.Models;
 
+// The 16 fixed color groups used in the Mission Creator.
+// Display names (with spaces) are in ColorGroupNameExtensions.ToDisplayName().
+public enum ColorGroupName
+{
+    Normal, Red, Orange, Yellow, LimeGreen, Green,
+    PowderBlue, SkyBlue, Blue, DarkBlue, Purple,
+    Pink, White, Grey, Black, Brown,
+}
+
+public static class ColorGroupNameExtensions
+{
+    public static string ToDisplayName(this ColorGroupName g) => g switch
+    {
+        ColorGroupName.LimeGreen  => "Lime Green",
+        ColorGroupName.PowderBlue => "Powder Blue",
+        ColorGroupName.SkyBlue    => "Sky Blue",
+        ColorGroupName.DarkBlue   => "Dark Blue",
+        _                         => g.ToString(),
+    };
+
+    public static ColorGroupName FromDisplayName(string name) => name switch
+    {
+        "Lime Green"  => ColorGroupName.LimeGreen,
+        "Powder Blue" => ColorGroupName.PowderBlue,
+        "Sky Blue"    => ColorGroupName.SkyBlue,
+        "Dark Blue"   => ColorGroupName.DarkBlue,
+        _             => Enum.Parse<ColorGroupName>(name),
+    };
+
+    // Representative hex swatch per group (shown in the UI picker)
+    public static string RepresentativeHex(this ColorGroupName g) => g switch
+    {
+        ColorGroupName.Normal    => "#A0C8C8",
+        ColorGroupName.Red       => "#FF0000",
+        ColorGroupName.Orange    => "#FF8600",
+        ColorGroupName.Yellow    => "#FFFF00",
+        ColorGroupName.LimeGreen => "#B1FF00",
+        ColorGroupName.Green     => "#009E00",
+        ColorGroupName.PowderBlue=> "#ACF0FF",
+        ColorGroupName.SkyBlue   => "#00D6FA",
+        ColorGroupName.Blue      => "#4550FF",
+        ColorGroupName.DarkBlue  => "#0700F5",
+        ColorGroupName.Purple    => "#BA00FF",
+        ColorGroupName.Pink      => "#FF81E8",
+        ColorGroupName.White     => "#FFFFFF",
+        ColorGroupName.Grey      => "#959595",
+        ColorGroupName.Black     => "#404040",
+        ColorGroupName.Brown     => "#9E6E00",
+        _                        => "#808080",
+    };
+}
+
 public enum RequirementType
 {
     TypeRequirement = 0,
@@ -233,16 +285,30 @@ public enum MedalFlags : ushort
 }
 
 [Flags]
-public enum ChaoClassroomFlags : int
+public enum ChaoAbilityFlags : int
 {
     None = 0,
-    DrawingLevel1 = 0x1, DrawingLevel2 = 0x2, DrawingLevel3 = 0x4,
-    DrawingLevel4 = 0x8, DrawingLevel5 = 0x10,
-    ShakeDance = 0x100, SpinDance = 0x200, StepDance = 0x400, GoGoDance = 0x800,
-    Exercise = 0x1000,
-    SongLevel1 = 0x10000, SongLevel2 = 0x20000, SongLevel3 = 0x40000,
-    SongLevel4 = 0x80000, SongLevel5 = 0x100000,
-    Bell = 0x1000000, Castanets = 0x2000000, Cymbals = 0x4000000,
-    Drum = 0x8000000, Flute = 0x10000000, Maracas = 0x20000000,
-    Trumpet = 0x40000000, Tambourine = unchecked((int)0x80000000),
+    BellySlide   = 1<<0,  RollAround   = 1<<1,  Backstroke  = 1<<2,
+    HopAround    = 1<<3,  WashFace     = 1<<4,  Dash        = 1<<5,
+    Roar         = 1<<6,  SharpenNails = 1<<7,  PoundChest  = 1<<8,
+    Strut        = 1<<9,  Whistle      = 1<<10, Situps      = 1<<11,
+    Fart         = 1<<12, Somersault   = 1<<13, Hum         = 1<<14,
+    FieryBall    = 1<<15, LoseParts    = 1<<16, LoseLegs    = 1<<17,
+    BreatheFire  = 1<<18, BuckFeet     = 1<<19, WagTail     = 1<<20,
+}
+
+// uint avoids signed-overflow on Tambourine (bit 31)
+[Flags]
+public enum ChaoClassroomFlags : uint
+{
+    None = 0,
+    DrawingLevel1 = 1u<<0,  DrawingLevel2 = 1u<<1,  DrawingLevel3 = 1u<<2,
+    DrawingLevel4 = 1u<<3,  DrawingLevel5 = 1u<<4,
+    ShakeDance    = 1u<<8,  SpinDance     = 1u<<9,  StepDance     = 1u<<10,
+    GoGoDance     = 1u<<11, Exercise      = 1u<<12,
+    SongLevel1    = 1u<<16, SongLevel2    = 1u<<17, SongLevel3    = 1u<<18,
+    SongLevel4    = 1u<<19, SongLevel5    = 1u<<20,
+    Bell          = 1u<<24, Castanets     = 1u<<25, Cymbals       = 1u<<26,
+    Drum          = 1u<<27, Flute         = 1u<<28, Maracas       = 1u<<29,
+    Trumpet       = 1u<<30, Tambourine    = 1u<<31,
 }

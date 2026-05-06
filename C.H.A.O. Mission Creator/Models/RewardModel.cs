@@ -15,12 +15,15 @@ public class RewardModel
 
 public class ChaoRewardValue
 {
-    // eCHAO_TYPE is enum class — magic_enum returns plain member name, e.g. "Child"
-    public string ChaoType { get; set; } = "Child";
-    // Regular enums keep their prefix, e.g. "ChaoColor_Normal", "SA2BTexture_None"
-    public string Color { get; set; } = "ChaoColor_Normal";
-    public string Texture { get; set; } = "SA2BTexture_None";
-    public string Tone { get; set; } = "ChaoTone_MonoTone";
-    public string Shiny { get; set; } = "ChaoShiny_None";
-    public string Name { get; set; } = "";
+    // EChaoType is enum class in C++ — magic_enum serializes as plain member name e.g. "Child"
+    public EChaoType ChaoType { get; set; } = ModelDefaults.ChaoType;
+
+    // ChaoColor has no C# enum (hundreds of values loaded from JSON at runtime).
+    // Stored as the full enum name string e.g. "ChaoColor_Normal".
+    public string Color { get; set; } = ModelDefaults.NormalColorEnumName;
+
+    public SA2BTexture Texture { get; set; } = ModelDefaults.Texture;
+    public ChaoTone    Tone    { get; set; } = ModelDefaults.Tone;
+    public ChaoShiny   Shiny   { get; set; } = ModelDefaults.Shiny;
+    public string      Name    { get; set; } = "";
 }

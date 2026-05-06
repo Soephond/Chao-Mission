@@ -10,26 +10,62 @@ public class MissionSerializer
 
     public MissionSerializer(ColorReferenceService colors) => _colors = colors;
 
-    // ── Deserialize ──────────────────────────────────────────────────────────
+    // ── Enum ↔ JSON name helpers ─────────────────────────────────────────
+    // ChaoSkill has no prefix in C# — add "ChaoSkill_" for JSON
+    private static string    SkillToJson(ChaoSkill s)       => $"{JsonKeys.SkillPrefix}{s}";
+    private static ChaoSkill SkillFromJson(string s)        => Enum.Parse<ChaoSkill>(s.Replace(JsonKeys.SkillPrefix, ""));
+
+    // CharacterBondOrder already carries its prefix (CharacterBond_Sonic)
+    private static string             CharacterToJson(CharacterBondOrder c) => c.ToString();
+    private static CharacterBondOrder CharacterFromJson(string s)           => Enum.Parse<CharacterBondOrder>(s);
+
+    // ChaoReward typed field helpers
+    // EChaoType is enum class — magic_enum returns plain member name ("Child"), no scope prefix
+    private static string     EChaoTypeToJson(EChaoType t)    => t.ToString();
+    private static EChaoType  EChaoTypeFromJson(JsonElement e) =>
+        e.ValueKind == JsonValueKind.Number
+            ? (EChaoType)e.GetInt32()
+            : Enum.Parse<EChaoType>(e.GetString()!);
+
+    private static string      TextureToJson(SA2BTexture t)    => $"{JsonKeys.TexturePrefix}{t}";
+    private static SA2BTexture TextureFromJson(JsonElement e)  =>
+        e.ValueKind == JsonValueKind.Number
+            ? (SA2BTexture)e.GetInt32()
+            : Enum.Parse<SA2BTexture>(e.GetString()!.Replace(JsonKeys.TexturePrefix, ""));
+
+    private static string   ToneToJson(ChaoTone t)       => $"{JsonKeys.TonePrefix}{t}";
+    private static ChaoTone ToneFromJson(JsonElement e)  =>
+        e.ValueKind == JsonValueKind.Number
+            ? (ChaoTone)e.GetInt32()
+            : Enum.Parse<ChaoTone>(e.GetString()!.Replace(JsonKeys.TonePrefix, ""));
+
+    private static string    ShinyToJson(ChaoShiny s)      => $"{JsonKeys.ShinyPrefix}{s}";
+    private static ChaoShiny ShinyFromJson(JsonElement e)  =>
+        e.ValueKind == JsonValueKind.Number
+            ? (ChaoShiny)e.GetInt32()
+            : Enum.Parse<ChaoShiny>(e.GetString()!.Replace(JsonKeys.ShinyPrefix, ""));
+
+    // ── Deserialize ──────────────────────────────────────────────────────
 
     public MissionEditorModel Deserialize(string json)
     {
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
-        var model = new MissionEditorModel();
+        var model = new MissionEditorModel
+        {
+            Name = root.GetProperty(JsonKeys.MissionName).GetString() ?? "",
+        };
 
-        model.Name = root.GetProperty("Name").GetString() ?? "";
-
-        foreach (var line in root.GetProperty("Description").EnumerateArray())
+        foreach (var line in root.GetProperty(JsonKeys.Description).EnumerateArray())
             model.DescriptionLines.Add(line.GetString() ?? "");
 
-        model.Requirements = ReadRequirements(root.GetProperty("Requirements"));
-        model.Rewards = ReadRewards(root.GetProperty("Rewards"));
+        model.Requirements = ReadRequirements(root.GetProperty(JsonKeys.Requirements));
+        model.Rewards      = ReadRewards(root.GetProperty(JsonKeys.Rewards));
 
-        if (root.TryGetProperty("Bonus Requirements", out var bonusReqs))
+        if (root.TryGetProperty(JsonKeys.BonusRequirements, out var bonusReqs))
             model.BonusRequirements = ReadRequirements(bonusReqs);
 
-        if (root.TryGetProperty("Bonus Rewards", out var bonusRews))
+        if (root.TryGetProperty(JsonKeys.BonusRewards, out var bonusRews))
             model.BonusRewards = ReadRewards(bonusRews);
 
         return model;
@@ -47,12 +83,12 @@ public class MissionSerializer
     {
         var model = new RequirementModel
         {
-            Type = Enum.Parse<RequirementType>(el.GetProperty("Type").GetString()!),
-            Description = el.GetProperty("Description").GetString() ?? "",
-            Checks = new(),
+            Type        = Enum.Parse<RequirementType>(el.GetProperty(JsonKeys.Type).GetString()!),
+            Description = el.GetProperty(JsonKeys.Description).GetString() ?? "",
+            Checks      = new(),
         };
 
-        foreach (var branch in el.GetProperty("Checks").EnumerateArray())
+        foreach (var branch in el.GetProperty(JsonKeys.Checks).EnumerateArray())
         {
             var andList = new List<CheckModel>();
             foreach (var check in branch.EnumerateArray())
@@ -66,12 +102,14 @@ public class MissionSerializer
 
     private static CheckModel ReadCheck(JsonElement el)
     {
-        var checkType = el.GetProperty("Type").GetString()!;
-        var cm = new CheckModel { CheckType = checkType };
+        var cm = new CheckModel
+        {
+            CheckType = Enum.Parse<ValueCheckType>(el.GetProperty(JsonKeys.Type).GetString()!),
+        };
 
-        bool hasValue = el.TryGetProperty("Value", out var valEl);
-        bool hasMin   = el.TryGetProperty("MinValue", out var minEl);
-        bool hasMax   = el.TryGetProperty("MaxValue", out var maxEl);
+        bool hasValue = el.TryGetProperty(JsonKeys.Value,    out var valEl);
+        bool hasMin   = el.TryGetProperty(JsonKeys.MinValue, out var minEl);
+        bool hasMax   = el.TryGetProperty(JsonKeys.MaxValue, out var maxEl);
 
         cm.Value    = hasValue ? ReadValueString(valEl) : null;
         cm.MinValue = hasMin   ? ReadValueString(minEl) : null;
@@ -79,16 +117,21 @@ public class MissionSerializer
 
         cm.RangeMode = (hasValue, hasMin, hasMax) switch
         {
-            (true, _, _)           => RangeMode.Exact,
-            (false, true, true)    => RangeMode.Range,
-            (false, true, false)   => RangeMode.Min,
-            (false, false, true)   => RangeMode.Max,
-            _                      => RangeMode.Exact,
+            (true, _, _)         => RangeMode.Exact,
+            (false, true, true)  => RangeMode.Range,
+            (false, true, false) => RangeMode.Min,
+            (false, false, true) => RangeMode.Max,
+            _                    => RangeMode.Exact,
         };
 
-        if (el.TryGetProperty("Inverted", out var inv)) cm.Inverted = inv.GetBoolean();
-        if (el.TryGetProperty("Skill", out var skill))  cm.Skill = skill.GetString();
-        if (el.TryGetProperty("Character", out var ch)) cm.Character = ch.GetString();
+        if (el.TryGetProperty(JsonKeys.Inverted,  out var inv) && inv.ValueKind == JsonValueKind.True)
+            cm.Inverted = true;
+
+        if (el.TryGetProperty(JsonKeys.Skill,     out var skill) && skill.GetString() is { } sk)
+            cm.Skill = SkillFromJson(sk);
+
+        if (el.TryGetProperty(JsonKeys.Character, out var ch)    && ch.GetString() is { } c)
+            cm.Character = CharacterFromJson(c);
 
         return cm;
     }
@@ -101,22 +144,22 @@ public class MissionSerializer
         if (req.Checks.Count == 0) return;
         if (!req.Checks.All(branch =>
             branch.Count == 1 &&
-            branch[0].CheckType == nameof(ValueCheckType.ColorCheck) &&
+            branch[0].CheckType == ValueCheckType.ColorCheck &&
             branch[0].Value is not null &&
             branch[0].RangeMode == RangeMode.Exact &&
             !branch[0].Inverted))
             return;
 
-        var enumNames = req.Checks.Select(b => b[0].Value!).ToList();
-        var groups = enumNames.Select(n => _colors.GetGroupForEnum(n)).ToList();
+        var groups = req.Checks
+            .Select(b => _colors.GetGroupForEnum(b[0].Value!))
+            .ToList();
 
         if (groups.Any(g => g is null)) return;
-        if (groups.Distinct().Count() != 1) return;
+        if (groups.Select(g => g!.Value).Distinct().Count() != 1) return;
 
-        var groupName = groups[0]!;
         req.Checks = new List<List<CheckModel>>
         {
-            new() { new CheckModel { CheckType = nameof(ValueCheckType.ColorCheck), ColorGroup = groupName } }
+            new() { new CheckModel { CheckType = ValueCheckType.ColorCheck, ColorGroup = groups[0]!.Value } }
         };
     }
 
@@ -130,30 +173,30 @@ public class MissionSerializer
 
     private static RewardModel ReadReward(JsonElement el)
     {
-        var type = Enum.Parse<RewardType>(el.GetProperty("Type").GetString()!);
+        var type = Enum.Parse<RewardType>(el.GetProperty(JsonKeys.Type).GetString()!);
         var model = new RewardModel
         {
-            Type = type,
-            Description = el.GetProperty("Description").GetString() ?? "",
+            Type        = type,
+            Description = el.GetProperty(JsonKeys.Description).GetString() ?? "",
         };
 
-        if (el.TryGetProperty("Amount", out var amt)) model.Amount = amt.GetInt32();
+        if (el.TryGetProperty(JsonKeys.Amount, out var amt))
+            model.Amount = amt.GetInt32();
 
         if (type == RewardType.ChaoReward)
         {
-            var v = el.GetProperty("Value");
+            var v = el.GetProperty(JsonKeys.Value);
             model.ChaoValue = new ChaoRewardValue
             {
-                // eCHAO_TYPE is enum class — magic_enum returns plain member name e.g. "Child"
-                ChaoType = v.TryGetProperty("ChaoType", out var ct) ? ReadValueString(ct) : "Child",
-                Color    = v.TryGetProperty("Color",    out var co) ? ReadValueString(co) : "ChaoColor_Normal",
-                Texture  = v.TryGetProperty("Texture",  out var tx) ? ReadValueString(tx) : "SA2BTexture_None",
-                Tone     = v.TryGetProperty("Tone",     out var tn) ? ReadValueString(tn) : "ChaoTone_MonoTone",
-                Shiny    = v.TryGetProperty("Shiny",    out var sh) ? ReadValueString(sh) : "ChaoShiny_None",
-                Name     = v.TryGetProperty("Name",     out var nm) ? nm.GetString() ?? "" : "",
+                ChaoType = v.TryGetProperty(JsonKeys.ChaoType, out var ct) ? EChaoTypeFromJson(ct)  : ModelDefaults.ChaoType,
+                Color    = v.TryGetProperty(JsonKeys.Color,    out var co) ? ReadValueString(co)     : ModelDefaults.NormalColorEnumName,
+                Texture  = v.TryGetProperty(JsonKeys.Texture,  out var tx) ? TextureFromJson(tx)     : ModelDefaults.Texture,
+                Tone     = v.TryGetProperty(JsonKeys.Tone,     out var tn) ? ToneFromJson(tn)        : ModelDefaults.Tone,
+                Shiny    = v.TryGetProperty(JsonKeys.Shiny,    out var sh) ? ShinyFromJson(sh)       : ModelDefaults.Shiny,
+                Name     = v.TryGetProperty(JsonKeys.ChaoName, out var nm) ? nm.GetString() ?? ""   : "",
             };
         }
-        else if (type != RewardType.RingReward && el.TryGetProperty("Value", out var enumVal))
+        else if (type != RewardType.RingReward && el.TryGetProperty(JsonKeys.Value, out var enumVal))
         {
             model.EnumValue = ReadValueString(enumVal);
         }
@@ -161,34 +204,33 @@ public class MissionSerializer
         return model;
     }
 
-    // ── Serialize ────────────────────────────────────────────────────────────
+    // ── Serialize ────────────────────────────────────────────────────────
 
     public string Serialize(MissionEditorModel model)
     {
-        var opts = new JsonWriterOptions { Indented = true };
         using var ms = new MemoryStream();
-        using var w = new Utf8JsonWriter(ms, opts);
+        using var w  = new Utf8JsonWriter(ms, new JsonWriterOptions { Indented = true });
 
         w.WriteStartObject();
-        w.WriteString("Name", model.Name);
+        w.WriteString(JsonKeys.MissionName, model.Name);
 
-        w.WriteStartArray("Description");
+        w.WriteStartArray(JsonKeys.Description);
         foreach (var line in model.DescriptionLines) w.WriteStringValue(line);
         w.WriteEndArray();
 
-        w.WriteStartArray("Requirements");
+        w.WriteStartArray(JsonKeys.Requirements);
         foreach (var req in model.Requirements) WriteRequirement(w, req);
         w.WriteEndArray();
 
-        w.WriteStartArray("Rewards");
+        w.WriteStartArray(JsonKeys.Rewards);
         foreach (var rew in model.Rewards) WriteReward(w, rew);
         w.WriteEndArray();
 
-        w.WriteStartArray("Bonus Requirements");
+        w.WriteStartArray(JsonKeys.BonusRequirements);
         foreach (var req in model.BonusRequirements) WriteRequirement(w, req);
         w.WriteEndArray();
 
-        w.WriteStartArray("Bonus Rewards");
+        w.WriteStartArray(JsonKeys.BonusRewards);
         foreach (var rew in model.BonusRewards) WriteReward(w, rew);
         w.WriteEndArray();
 
@@ -200,21 +242,21 @@ public class MissionSerializer
     private void WriteRequirement(Utf8JsonWriter w, RequirementModel req)
     {
         w.WriteStartObject();
-        w.WriteString("Type", req.Type.ToString());
-        w.WriteString("Description", req.Description);
-        w.WriteStartArray("Checks");
+        w.WriteString(JsonKeys.Type,        req.Type.ToString());
+        w.WriteString(JsonKeys.Description, req.Description);
+        w.WriteStartArray(JsonKeys.Checks);
 
         foreach (var branch in req.Checks)
         {
-            // Expand color group into one OR branch per color in the group
             if (branch.Count == 1 && branch[0].ColorGroup is { } grp)
             {
+                // Expand color group: one OR branch per color in the group
                 foreach (var entry in _colors.GetColorsForGroup(grp))
                 {
                     w.WriteStartArray();
                     w.WriteStartObject();
-                    w.WriteString("Type", nameof(ValueCheckType.ColorCheck));
-                    w.WriteString("Value", entry.EnumName);
+                    w.WriteString(JsonKeys.Type,  ValueCheckType.ColorCheck.ToString());
+                    w.WriteString(JsonKeys.Value, entry.EnumName);
                     w.WriteEndObject();
                     w.WriteEndArray();
                 }
@@ -234,60 +276,56 @@ public class MissionSerializer
     private static void WriteCheck(Utf8JsonWriter w, CheckModel c)
     {
         w.WriteStartObject();
-        w.WriteString("Type", c.CheckType);
+        w.WriteString(JsonKeys.Type, c.CheckType.ToString());
 
-        if (c.Skill is not null)     w.WriteString("Skill", c.Skill);
-        if (c.Character is not null) w.WriteString("Character", c.Character);
+        if (c.Skill.HasValue)     w.WriteString(JsonKeys.Skill,     SkillToJson(c.Skill.Value));
+        if (c.Character.HasValue) w.WriteString(JsonKeys.Character, CharacterToJson(c.Character.Value));
 
         switch (c.RangeMode)
         {
-            case RangeMode.Exact: WriteValue(w, "Value",    c.Value);    break;
-            case RangeMode.Min:   WriteValue(w, "MinValue", c.MinValue); break;
-            case RangeMode.Max:   WriteValue(w, "MaxValue", c.MaxValue); break;
+            case RangeMode.Exact: WriteValue(w, JsonKeys.Value,    c.Value);    break;
+            case RangeMode.Min:   WriteValue(w, JsonKeys.MinValue, c.MinValue); break;
+            case RangeMode.Max:   WriteValue(w, JsonKeys.MaxValue, c.MaxValue); break;
             case RangeMode.Range:
-                WriteValue(w, "MinValue", c.MinValue);
-                WriteValue(w, "MaxValue", c.MaxValue);
+                WriteValue(w, JsonKeys.MinValue, c.MinValue);
+                WriteValue(w, JsonKeys.MaxValue, c.MaxValue);
                 break;
         }
 
-        if (c.Inverted) w.WriteBoolean("Inverted", true);
+        if (c.Inverted) w.WriteBoolean(JsonKeys.Inverted, true);
         w.WriteEndObject();
     }
 
     private static void WriteValue(Utf8JsonWriter w, string key, string? val)
     {
         if (val is null) return;
-        if (int.TryParse(val, out var n))
-            w.WriteNumber(key, n);
-        else
-            w.WriteString(key, val);
+        if (int.TryParse(val, out var n)) w.WriteNumber(key, n);
+        else                              w.WriteString(key, val);
     }
 
     private static void WriteReward(Utf8JsonWriter w, RewardModel r)
     {
         w.WriteStartObject();
-        w.WriteString("Type", r.Type.ToString());
-        w.WriteNumber("Amount", r.Amount);
+        w.WriteString(JsonKeys.Type,   r.Type.ToString());
+        w.WriteNumber(JsonKeys.Amount, r.Amount);
 
         if (r.Type == RewardType.ChaoReward && r.ChaoValue is { } cv)
         {
-            w.WriteStartObject("Value");
-            // ChaoType: plain member name for enum class (e.g. "Child")
-            // or integer — write as-is (string or number)
-            WriteValue(w, "ChaoType", cv.ChaoType);
-            WriteValue(w, "Color",    cv.Color);
-            WriteValue(w, "Texture",  cv.Texture);
-            WriteValue(w, "Tone",     cv.Tone);
-            WriteValue(w, "Shiny",    cv.Shiny);
-            w.WriteString("Name", cv.Name);
+            w.WriteStartObject(JsonKeys.Value);
+            w.WriteString(JsonKeys.ChaoType, EChaoTypeToJson(cv.ChaoType));
+            WriteValue(w,  JsonKeys.Color,   cv.Color);           // string (no C# enum for ChaoColor)
+            w.WriteString(JsonKeys.Texture,  TextureToJson(cv.Texture));
+            w.WriteString(JsonKeys.Tone,     ToneToJson(cv.Tone));
+            w.WriteString(JsonKeys.Shiny,    ShinyToJson(cv.Shiny));
+            w.WriteString(JsonKeys.ChaoName, cv.Name);
             w.WriteEndObject();
         }
         else if (r.EnumValue is not null)
         {
-            WriteValue(w, "Value", r.EnumValue);
+            WriteValue(w, JsonKeys.Value, r.EnumValue);
         }
 
-        w.WriteString("Description", r.Description);
+        w.WriteString(JsonKeys.Description, r.Description);
         w.WriteEndObject();
     }
 }

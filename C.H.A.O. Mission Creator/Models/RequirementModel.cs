@@ -5,13 +5,12 @@ public class RequirementModel
     public RequirementType Type { get; set; } = RequirementType.TypeRequirement;
     public string Description { get; set; } = "";
     // Outer list = OR branches; inner list = AND conditions within a branch
-    public List<List<CheckModel>> Checks { get; set; } = new() { new() { new() } };
+    public List<List<CheckModel>> Checks { get; set; } = new() { new() { new CheckModel() } };
 }
 
 public class CheckModel
 {
-    // Matches ValueCheckType enum name e.g. "LevelCheck"
-    public string CheckType { get; set; } = nameof(ValueCheckType.ChaoTypeCheck);
+    public ValueCheckType CheckType { get; set; } = ValueCheckType.ChaoTypeCheck;
     public RangeMode RangeMode { get; set; } = RangeMode.Exact;
     public bool Inverted { get; set; }
 
@@ -20,14 +19,12 @@ public class CheckModel
     public string? MinValue { get; set; }
     public string? MaxValue { get; set; }
 
-    // For stat/happiness checks
-    public string? Skill { get; set; }
+    // For stat checks (LevelCheck, GradeCheck, PointsCheck)
+    public ChaoSkill? Skill { get; set; }
 
     // For bond checks
-    public string? Character { get; set; }
+    public CharacterBondOrder? Character { get; set; }
 
-    // For ColorCheck group mode (non-advanced): group name e.g. "Red"
-    // When set, serializer expands to one OR branch per color in group.
-    // When null, Value holds the exact enum name (advanced mode).
-    public string? ColorGroup { get; set; }
+    // For ColorCheck group mode: null = advanced (exact color), set = group picker
+    public ColorGroupName? ColorGroup { get; set; }
 }

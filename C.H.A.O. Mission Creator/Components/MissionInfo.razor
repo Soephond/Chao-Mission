@@ -1,0 +1,79 @@
+@inject MissionFileService FileService
+
+<div class="left-panel">
+    <div>
+        <label>Mission Name</label>
+        <input type="text" value="@Model.Name"
+               @onchange="e => { Model.Name = e.Value?.ToString() ?? string.Empty; OnChanged.InvokeAsync(); }" />
+    </div>
+
+    <div>
+        <label>Description</label>
+        @for (int i = 0; i < Model.DescriptionLines.Count; i++)
+        {
+            var idx = i;
+            <div class="desc-line">
+                <input type="text" value="@Model.DescriptionLines[idx]"
+                       @onchange="e => { Model.DescriptionLines[idx] = e.Value?.ToString() ?? string.Empty; OnChanged.InvokeAsync(); }" />
+                <button class="btn-danger" @onclick="() => RemoveLine(idx)">&#x2715;</button>
+            </div>
+        }
+        <button class="btn-add" @onclick="AddLine">+ Add line</button>
+    </div>
+
+    @if (!_missionLoaded)
+    {
+        <DropZone OnFilePicked="LoadFile" />
+    }
+    else
+    {
+        <div style="font-size:12px">
+            <a href="#" style="color:#7878a0" @onclick:preventDefault @onclick="ResetAndPickNew">
+                &#x21A9; Load different file
+            </a>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public MissionEditorModel Model { get; set; } = new();
+    [Parameter] public EventCallback OnChanged { get; set; }
+    [Parameter] public EventCallback<string?> OnStatusChanged { get; set; }
+
+    private bool _missionLoaded;
+
+    private async Task LoadFile((string FileName, string Content) file)
+    {
+        try
+        {
+            var loaded = FileService.LoadFromContent(file.Content);
+            Model.Name = loaded.Name;
+            Model.DescriptionLines = loaded.DescriptionLines;
+            Model.Requirements = loaded.Requirements;
+            Model.Rewards = loaded.Rewards;
+            Model.BonusRequirements = loaded.BonusRequirements;
+            Model.BonusRewards = loaded.BonusRewards;
+            _missionLoaded = true;
+            await OnChanged.InvokeAsync();
+            await OnStatusChanged.InvokeAsync($"Loaded: {file.FileName}");
+        }
+        catch (Exception ex)
+        {
+            await OnStatusChanged.InvokeAsync($"Error loading file: {ex.Message}");
+        }
+    }
+
+    private void AddLine()
+    {
+        Model.DescriptionLines.Add("");
+        OnChanged.InvokeAsync();
+    }
+
+    private void RemoveLine(int idx)
+    {
+        Model.DescriptionLines.RemoveAt(idx);
+        OnChanged.InvokeAsync();
+    }
+
+    private void ResetAndPickNew() => _missionLoaded = false;
+}
