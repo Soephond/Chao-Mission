@@ -285,6 +285,16 @@ public enum MedalFlags : ushort
 }
 
 [Flags]
+public enum ChaoToyFlags : short
+{
+    None        = 0,
+    Rattle      = 1<<0, Car         = 1<<1, PictureBook = 1<<2,
+    SonicDoll   = 1<<4, Broomstick  = 1<<5, PogoStick   = 1<<7,
+    Crayons     = 1<<8, BubbleWand  = 1<<9, Shovel      = 1<<10,
+    WateringCan = 1<<11,
+}
+
+[Flags]
 public enum ChaoAbilityFlags : int
 {
     None = 0,

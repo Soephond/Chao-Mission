@@ -1,0 +1,541 @@
+@inject AppSettingsService Settings
+@inject ColorReferenceService ColorSvc
+
+<div class="check-row">
+    @if (AvailableCheckTypes.Count > 1)
+    {
+        <select value="@((int)Check.CheckType)" @onchange="OnCheckTypeChanged">
+            @foreach (var ct in AvailableCheckTypes)
+            {
+                <option value="@((int)ct.Key)">@ct.Value</option>
+            }
+        </select>
+    }
+
+    @switch (Check.CheckType)
+    {
+        case ValueCheckType.ChaoTypeCheck:
+            <select value="@((int)(Check.Value is not null && int.TryParse(Check.Value, out var ctv) ? (ChaoType)ctv : ModelDefaults.DefaultChaoType))"
+                    @onchange="e => SetExact(e.Value?.ToString())">
+                @foreach (ChaoType t in Enum.GetValues<ChaoType>())
+                {
+                    <option value="@((int)t)">@FormatName(t.ToString())</option>
+                }
+            </select>
+            break;
+
+        case ValueCheckType.SwimFlyInfluenceCheck:
+        case ValueCheckType.RunPowerInfluenceCheck:
+        case ValueCheckType.AlignmentCheck:
+        case ValueCheckType.MagnitudeCheck:
+            @RenderFloatSlider()
+            break;
+
+        case ValueCheckType.LevelCheck:
+            @RenderSkillSelect()
+            @RenderIntSlider(0, 99)
+            break;
+
+        case ValueCheckType.GradeCheck:
+            @RenderSkillSelect()
+            <select value="@((int)(Check.Value is not null && int.TryParse(Check.Value, out var gv) ? (StatGrade)gv : ModelDefaults.DefaultGrade))"
+                    @onchange="e => SetExact(e.Value?.ToString())">
+                @foreach (StatGrade g in Enum.GetValues<StatGrade>())
+                {
+                    <option value="@((int)g)">@g</option>
+                }
+            </select>
+            break;
+
+        case ValueCheckType.PointsCheck:
+            @RenderSkillSelect()
+            @RenderIntSlider(0, 4000)
+            break;
+
+        case ValueCheckType.HappinessCheck:
+            @RenderIntSlider(0, 32767)
+            break;
+
+        case ValueCheckType.ColorCheck:
+            @RenderColorPicker()
+            break;
+
+        case ValueCheckType.ToneCheck:
+            <select value="@((int)(Check.Value is not null && int.TryParse(Check.Value, out var tnv) ? (ChaoTone)tnv : ModelDefaults.DefaultTone))"
+                    @onchange="e => SetExact(e.Value?.ToString())">
+                @foreach (ChaoTone t in Enum.GetValues<ChaoTone>())
+                {
+                    <option value="@((int)t)">@t</option>
+                }
+            </select>
+            break;
+
+        case ValueCheckType.ShinyCheck:
+            <select value="@((int)(Check.Value is not null && int.TryParse(Check.Value, out var shv) ? (ChaoShiny)shv : ModelDefaults.DefaultShiny))"
+                    @onchange="e => SetExact(e.Value?.ToString())">
+                @foreach (ChaoShiny s in Enum.GetValues<ChaoShiny>())
+                {
+                    <option value="@((int)s)">@s</option>
+                }
+            </select>
+            break;
+
+        case ValueCheckType.TextureCheck:
+            <select value="@(Check.Value ?? TextureToOptionValue(ModelDefaults.DefaultTexture))"
+                    @onchange="e => SetExact(e.Value?.ToString())">
+                @foreach (SA2BTexture t in Enum.GetValues<SA2BTexture>())
+                {
+                    <option value="@TextureToOptionValue(t)">@t</option>
+                }
+            </select>
+            break;
+
+        case ValueCheckType.AnimalArmsCheck:
+        case ValueCheckType.AnimalEarsCheck:
+        case ValueCheckType.AnimalForeheadCheck:
+        case ValueCheckType.AnimalHornCheck:
+        case ValueCheckType.AnimalLegsCheck:
+        case ValueCheckType.AnimalTailCheck:
+        case ValueCheckType.AnimalWingsCheck:
+        case ValueCheckType.AnimalFaceCheck:
+            <select value="@(Check.Value ?? AnimalToOptionValue(ModelDefaults.DefaultAnimal))"
+                    @onchange="e => SetExact(e.Value?.ToString())">
+                @foreach (Al_Animal a in Enum.GetValues<Al_Animal>().Where(a => a != Al_Animal.None))
+                {
+                    <option value="@AnimalToOptionValue(a)">@a.ToString().Replace("CWE_", "[CWE] ")</option>
+                }
+            </select>
+            break;
+
+        case ValueCheckType.FlagCheck:
+            @RenderFlagCheckboxes()
+            break;
+
+        case ValueCheckType.TotalCheck:
+            @RenderIntSlider(0, TotalMax)
+            break;
+
+        case ValueCheckType.AgeCheck:
+        case ValueCheckType.ReincarnationsCheck:
+        case ValueCheckType.AmountWonCheck:
+            @RenderIntSlider(0, 9999)
+            break;
+
+        case ValueCheckType.KarateRankCheck:
+            <select value="@(Check.Value ?? KarateToOptionValue(ModelDefaults.DefaultKarateRank))"
+                    @onchange="e => SetExact(e.Value?.ToString())">
+                @foreach (KarateRank r in Enum.GetValues<KarateRank>())
+                {
+                    <option value="@KarateToOptionValue(r)">@FormatName(r.ToString())</option>
+                }
+            </select>
+            break;
+
+        case ValueCheckType.CharacterLikeCheck:
+            @RenderCharacterSelect()
+            @RenderIntSlider(-100, 100)
+            break;
+
+        case ValueCheckType.CharacterFearCheck:
+        case ValueCheckType.CharacterDistanceCheck:
+        case ValueCheckType.CharacterMeetCheck:
+            @RenderCharacterSelect()
+            @RenderIntSlider(0, 9999)
+            break;
+    }
+
+    @if (ShowsRangeSelector)
+    {
+        <select value="@Check.RangeMode.ToString()" @onchange="e => { Check.RangeMode = Enum.Parse<RangeMode>(e.Value!.ToString()!); Changed(); }">
+            <option value="Exact">Exact</option>
+            <option value="Min">Min &#x2265;</option>
+            <option value="Max">Max &#x2264;</option>
+            <option value="Range">Range</option>
+        </select>
+        @if (Check.RangeMode == RangeMode.Range)
+        {
+            <span style="font-size:11px;color:#7878a0">&#x2192;</span>
+            <input type="number" style="width:70px;background:#0f0f23;border:1px solid #2a2a4a;border-radius:4px;color:#e0e0f0;padding:3px 5px"
+                   value="@Check.MaxValue"
+                   @onchange="e => { Check.MaxValue = e.Value?.ToString(); Changed(); }" />
+        }
+    }
+
+    <label style="font-size:11px;color:#7878a0;display:flex;align-items:center;gap:4px;white-space:nowrap">
+        <input type="checkbox" checked="@Check.Inverted"
+               @onchange="e => { Check.Inverted = (bool)(e.Value ?? false); Changed(); }" />
+        Inv
+    </label>
+
+    <button class="btn-danger" @onclick="() => OnRemove.InvokeAsync(Check)">&#x2715;</button>
+</div>
+
+@code {
+    [Parameter] public CheckModel Check { get; set; } = new();
+    [Parameter] public RequirementType RequirementType { get; set; }
+    [Parameter] public EventCallback<CheckModel> OnChanged { get; set; }
+    [Parameter] public EventCallback<CheckModel> OnRemove { get; set; }
+
+    // ── Option value helpers — derive from enums + JsonKeys prefixes ─────
+
+    // Numeric enums store integer string in Value; prefix-keyed enums store "Prefix_Name"
+    private static string TextureToOptionValue(SA2BTexture t) => $"{JsonKeys.TexturePrefix}{t}";
+    private static string AnimalToOptionValue(Al_Animal a)    => $"{JsonKeys.AnimalPrefix}{a}";
+    private static string KarateToOptionValue(KarateRank r)   => $"{JsonKeys.KarateRankPrefix}{r}";
+
+    // ── Helpers ──────────────────────────────────────────────────────────
+
+    private void Changed() => OnChanged.InvokeAsync(Check);
+
+    private void SetExact(string? val)
+    {
+        Check.Value = val; Check.MinValue = val; Check.MaxValue = val;
+        Changed();
+    }
+
+    private void OnCheckTypeChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var intVal))
+            Check.CheckType = (ValueCheckType)intVal;
+        Check.Value = null; Check.MinValue = null; Check.MaxValue = null;
+        Check.Skill = null; Check.Character = null; Check.ColorGroup = null;
+        Check.RangeMode = RangeMode.Exact;
+        Changed();
+    }
+
+    // Inserts a space before each uppercase letter that follows a lowercase/digit
+    private static string FormatName(string name) =>
+        System.Text.RegularExpressions.Regex.Replace(name, @"(?<=[a-z0-9])(?=[A-Z])", " ")
+            .Replace("_", " ");
+
+    private Dictionary<ValueCheckType, string> AvailableCheckTypes => RequirementType switch
+    {
+        RequirementType.TypeRequirement => new()
+        {
+            [ValueCheckType.ChaoTypeCheck]         = "Chao Type",
+            [ValueCheckType.SwimFlyInfluenceCheck]  = "Swim ↔ Fly",
+            [ValueCheckType.RunPowerInfluenceCheck] = "Run ↔ Power",
+            [ValueCheckType.AlignmentCheck]         = "Alignment",
+            [ValueCheckType.MagnitudeCheck]         = "Magnitude",
+        },
+        RequirementType.StatRequirement => new()
+        {
+            [ValueCheckType.LevelCheck]     = "Level",
+            [ValueCheckType.GradeCheck]     = "Grade",
+            [ValueCheckType.PointsCheck]    = "Points",
+            [ValueCheckType.HappinessCheck] = "Happiness",
+        },
+        RequirementType.AppearanceRequirement => new()
+        {
+            [ValueCheckType.ColorCheck]          = "Color",
+            [ValueCheckType.ToneCheck]           = "Tone",
+            [ValueCheckType.ShinyCheck]          = "Shiny",
+            [ValueCheckType.TextureCheck]        = "Texture",
+            [ValueCheckType.AnimalArmsCheck]     = "Arms",
+            [ValueCheckType.AnimalEarsCheck]     = "Ears",
+            [ValueCheckType.AnimalForeheadCheck] = "Forehead",
+            [ValueCheckType.AnimalHornCheck]     = "Horn",
+            [ValueCheckType.AnimalLegsCheck]     = "Legs",
+            [ValueCheckType.AnimalTailCheck]     = "Tail",
+            [ValueCheckType.AnimalWingsCheck]    = "Wings",
+            [ValueCheckType.AnimalFaceCheck]     = "Face",
+        },
+        RequirementType.AbilityRequirement  => new() { [ValueCheckType.FlagCheck] = "Specific Ability", [ValueCheckType.TotalCheck] = "Total Abilities" },
+        RequirementType.ToyRequirement      => new() { [ValueCheckType.FlagCheck] = "Specific Toy",     [ValueCheckType.TotalCheck] = "Total Toys" },
+        RequirementType.ClassesRequirement  => new() { [ValueCheckType.FlagCheck] = "Specific Class",   [ValueCheckType.TotalCheck] = "Total Classes" },
+        RequirementType.RaceRequirement     => new() { [ValueCheckType.FlagCheck] = "Specific Medal",   [ValueCheckType.TotalCheck] = "Total Medals" },
+        RequirementType.KarateRequirement   => new() { [ValueCheckType.KarateRankCheck] = "Rank", [ValueCheckType.AmountWonCheck] = "Matches Won" },
+        RequirementType.LifetimeRequirement => new() { [ValueCheckType.AgeCheck] = "Age", [ValueCheckType.ReincarnationsCheck] = "Reincarnations" },
+        RequirementType.BondRequirement     => BuildBondTypes(),
+        _ => new(),
+    };
+
+    private Dictionary<ValueCheckType, string> BuildBondTypes()
+    {
+        var d = new Dictionary<ValueCheckType, string> { [ValueCheckType.CharacterLikeCheck] = "Like" };
+        if (Settings.EnableAllChecks)
+        {
+            d[ValueCheckType.CharacterFearCheck]     = "Fear";
+            d[ValueCheckType.CharacterDistanceCheck] = "Distance";
+            d[ValueCheckType.CharacterMeetCheck]     = "Meet Count";
+        }
+        return d;
+    }
+
+    private bool ShowsRangeSelector => Check.CheckType is not (
+        ValueCheckType.ChaoTypeCheck   or ValueCheckType.ToneCheck        or ValueCheckType.ShinyCheck  or
+        ValueCheckType.TextureCheck    or ValueCheckType.AnimalArmsCheck  or ValueCheckType.AnimalEarsCheck or
+        ValueCheckType.AnimalForeheadCheck or ValueCheckType.AnimalHornCheck or ValueCheckType.AnimalLegsCheck or
+        ValueCheckType.AnimalTailCheck or ValueCheckType.AnimalWingsCheck or ValueCheckType.AnimalFaceCheck or
+        ValueCheckType.ColorCheck      or ValueCheckType.FlagCheck        or ValueCheckType.GradeCheck or
+        ValueCheckType.KarateRankCheck or ValueCheckType.SwimFlyInfluenceCheck or ValueCheckType.RunPowerInfluenceCheck or
+        ValueCheckType.AlignmentCheck  or ValueCheckType.MagnitudeCheck);
+
+    private int TotalMax => RequirementType switch
+    {
+        RequirementType.AbilityRequirement  => 21,
+        RequirementType.ToyRequirement      => 10,
+        RequirementType.ClassesRequirement  => 23,
+        RequirementType.RaceRequirement     => 15,
+        _ => 100
+    };
+
+    private string CurrentNumericValue =>
+        Check.RangeMode == RangeMode.Max ? Check.MaxValue ?? "0"
+        : Check.Value ?? Check.MinValue ?? "0";
+
+    // ── Sub-widget render fragments ───────────────────────────────────────
+
+    private RenderFragment RenderSkillSelect() => __builder =>
+    {
+        __builder.OpenElement(0, "select");
+        __builder.AddAttribute(1, "value", Check.Skill.HasValue
+            ? $"{JsonKeys.SkillPrefix}{Check.Skill.Value}"
+            : $"{JsonKeys.SkillPrefix}{ModelDefaults.DefaultSkill}");
+        __builder.AddAttribute(2, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+        {
+            var raw = e.Value?.ToString()?.Replace(JsonKeys.SkillPrefix, string.Empty);
+            Check.Skill = raw is not null && Enum.TryParse<ChaoSkill>(raw, out var s) ? s : ModelDefaults.DefaultSkill;
+            Changed();
+        }));
+        foreach (ChaoSkill s in Enum.GetValues<ChaoSkill>())
+        {
+            __builder.OpenElement(3, "option");
+            __builder.AddAttribute(4, "value", $"{JsonKeys.SkillPrefix}{s}");
+            __builder.AddContent(5, s.ToString());
+            __builder.CloseElement();
+        }
+        __builder.CloseElement();
+    };
+
+    private RenderFragment RenderCharacterSelect() => __builder =>
+    {
+        __builder.OpenElement(0, "select");
+        __builder.AddAttribute(1, "value", Check.Character?.ToString() ?? ModelDefaults.DefaultCharacter.ToString());
+        __builder.AddAttribute(2, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+        {
+            Check.Character = Enum.TryParse<CharacterBondOrder>(e.Value?.ToString(), out var c)
+                ? c : ModelDefaults.DefaultCharacter;
+            Changed();
+        }));
+        foreach (CharacterBondOrder c in Enum.GetValues<CharacterBondOrder>())
+        {
+            __builder.OpenElement(3, "option");
+            __builder.AddAttribute(4, "value", c.ToString());
+            __builder.AddContent(5, c.ToString().Replace("CharacterBond_", string.Empty));
+            __builder.CloseElement();
+        }
+        __builder.CloseElement();
+    };
+
+    private RenderFragment RenderIntSlider(int min, int max) => __builder =>
+    {
+        int current = int.TryParse(CurrentNumericValue, out var v) ? Math.Clamp(v, min, max) : min;
+
+        __builder.OpenElement(0, "div");
+        __builder.AddAttribute(1, "class", "slider-row");
+
+        __builder.OpenElement(2, "input");
+        __builder.AddAttribute(3, "type", "range");
+        __builder.AddAttribute(4, "min", min);
+        __builder.AddAttribute(5, "max", max);
+        __builder.AddAttribute(6, "value", current);
+        __builder.AddAttribute(7, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+        {
+            var s = e.Value?.ToString() ?? "0";
+            switch (Check.RangeMode)
+            {
+                case RangeMode.Max: Check.MaxValue = s; break;
+                case RangeMode.Min: Check.MinValue = s; break;
+                default:            Check.Value = s; Check.MinValue = s; break;
+            }
+            Changed();
+        }));
+        __builder.CloseElement();
+
+        __builder.OpenElement(8, "span");
+        __builder.AddAttribute(9, "class", "slider-val");
+        __builder.AddContent(10, current);
+        __builder.CloseElement();
+
+        __builder.CloseElement();
+    };
+
+    private RenderFragment RenderFloatSlider() => __builder =>
+    {
+        bool bipolar = Check.CheckType is
+            ValueCheckType.SwimFlyInfluenceCheck or
+            ValueCheckType.RunPowerInfluenceCheck or
+            ValueCheckType.AlignmentCheck;
+
+        float fval = float.TryParse(Check.Value, System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture, out var f) ? f : 0f;
+
+        string label = Check.CheckType switch
+        {
+            ValueCheckType.SwimFlyInfluenceCheck  => fval < -0.5f ? $"Swim ({fval:F2})" : fval > 0.5f ? $"Fly ({fval:F2})" : "Neutral",
+            ValueCheckType.RunPowerInfluenceCheck => fval < -0.5f ? $"Run ({fval:F2})"  : fval > 0.5f ? $"Power ({fval:F2})" : "Neutral",
+            ValueCheckType.AlignmentCheck          => fval < -0.33f ? "Dark" : fval > 0.33f ? "Hero" : "Neutral",
+            _                                      => $"{fval:F2}",
+        };
+
+        __builder.OpenElement(0, "div");
+        __builder.AddAttribute(1, "class", "slider-row");
+
+        __builder.OpenElement(2, "input");
+        __builder.AddAttribute(3, "type", "range");
+        __builder.AddAttribute(4, "min", bipolar ? "-100" : "0");
+        __builder.AddAttribute(5, "max", "100");
+        __builder.AddAttribute(6, "value", (int)(fval * 100));
+        __builder.AddAttribute(7, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+        {
+            if (int.TryParse(e.Value?.ToString(), out var iv))
+            {
+                Check.Value = (iv / 100.0f).ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                Check.MinValue = Check.Value; Check.MaxValue = Check.Value;
+                Changed();
+            }
+        }));
+        __builder.CloseElement();
+
+        __builder.OpenElement(8, "span");
+        __builder.AddAttribute(9, "class", "slider-val");
+        __builder.AddContent(10, label);
+        __builder.CloseElement();
+
+        __builder.CloseElement();
+    };
+
+    private RenderFragment RenderColorPicker() => __builder =>
+    {
+        bool groupMode = Check.ColorGroup is not null || !Settings.EnableAdvancedColorCheck;
+
+        __builder.OpenElement(0, "div");
+        __builder.AddAttribute(1, "style", "display:flex;gap:6px;align-items:center;flex-wrap:wrap");
+
+        if (groupMode)
+        {
+            ColorGroupName currentGroup = Check.ColorGroup ?? ColorGroupName.Normal;
+
+            __builder.OpenElement(2, "select");
+            __builder.AddAttribute(3, "value", (int)currentGroup);
+            __builder.AddAttribute(4, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+            {
+                if (int.TryParse(e.Value?.ToString(), out var gv))
+                    Check.ColorGroup = (ColorGroupName)gv;
+                Check.Value = null;
+                Changed();
+            }));
+            foreach (ColorGroupName g in Enum.GetValues<ColorGroupName>())
+            {
+                __builder.OpenElement(5, "option");
+                __builder.AddAttribute(6, "value", (int)g);
+                __builder.AddContent(7, g.ToDisplayName());
+                __builder.CloseElement();
+            }
+            __builder.CloseElement();
+
+            if (Settings.EnableAdvancedColorCheck)
+            {
+                __builder.OpenElement(8, "button");
+                __builder.AddAttribute(9, "class", "btn btn-secondary");
+                __builder.AddAttribute(10, "style", "font-size:11px");
+                __builder.AddAttribute(11, "title", "There are hundreds of color variants. Use this only if you need a very specific color.");
+                __builder.AddAttribute(12, "onclick", EventCallback.Factory.Create(this, () =>
+                {
+                    Check.ColorGroup = null;
+                    Check.Value = ModelDefaults.NormalColorEnumName;
+                    Changed();
+                }));
+                __builder.AddContent(13, "Advanced…");
+                __builder.CloseElement();
+            }
+        }
+        else
+        {
+            string currentVal = Check.Value ?? ModelDefaults.NormalColorEnumName;
+
+            __builder.OpenElement(2, "select");
+            __builder.AddAttribute(3, "value", currentVal);
+            __builder.AddAttribute(4, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+            {
+                Check.Value = e.Value?.ToString(); Changed();
+            }));
+            foreach (var c in ColorSvc.AllColors)
+            {
+                __builder.OpenElement(5, "option");
+                __builder.AddAttribute(6, "value", c.EnumName);
+                __builder.AddContent(7, c.EnumName.Replace(JsonKeys.ColorPrefix, string.Empty));
+                __builder.CloseElement();
+            }
+            __builder.CloseElement();
+
+            __builder.OpenElement(8, "button");
+            __builder.AddAttribute(9, "class", "btn btn-secondary");
+            __builder.AddAttribute(10, "style", "font-size:11px");
+            __builder.AddAttribute(11, "onclick", EventCallback.Factory.Create(this, () =>
+            {
+                Check.ColorGroup = ColorSvc.GetGroupForEnum(Check.Value ?? ModelDefaults.NormalColorEnumName)
+                    ?? ColorGroupName.Normal;
+                Check.Value = null;
+                Changed();
+            }));
+            __builder.AddContent(12, "← Group");
+            __builder.CloseElement();
+        }
+
+        __builder.CloseElement();
+    };
+
+    private RenderFragment RenderFlagCheckboxes() => __builder =>
+    {
+        long current = long.TryParse(Check.Value, out var lv) ? lv : 0;
+        var flags = GetFlagOptions();
+
+        __builder.OpenElement(0, "div");
+        __builder.AddAttribute(1, "style", "display:flex;flex-wrap:wrap;gap:4px");
+
+        int seq = 2;
+        foreach (var (lbl, bit) in flags)
+        {
+            bool isSet = (current & bit) != 0;
+            long capturedBit = bit;
+
+            __builder.OpenElement(seq++, "label");
+            __builder.AddAttribute(seq++, "style", "font-size:11px;display:flex;align-items:center;gap:2px;white-space:nowrap");
+
+            __builder.OpenElement(seq++, "input");
+            __builder.AddAttribute(seq++, "type", "checkbox");
+            __builder.AddAttribute(seq++, "checked", isSet);
+            __builder.AddAttribute(seq++, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e =>
+            {
+                bool chk = (bool)(e.Value ?? false);
+                long prev = long.TryParse(Check.Value, out var p) ? p : 0;
+                Check.Value = (chk ? prev | capturedBit : prev & ~capturedBit).ToString();
+                Check.MinValue = Check.Value; Check.MaxValue = Check.Value;
+                Changed();
+            }));
+            __builder.CloseElement();
+
+            __builder.AddContent(seq++, lbl);
+            __builder.CloseElement();
+        }
+
+        __builder.CloseElement();
+    };
+
+    private List<(string Label, long Bit)> GetFlagOptions() => RequirementType switch
+    {
+        RequirementType.AbilityRequirement  => FlagsFromEnum<ChaoAbilityFlags>(),
+        RequirementType.ToyRequirement      => FlagsFromEnum<ChaoToyFlags>(),
+        RequirementType.ClassesRequirement  => FlagsFromEnum<ChaoClassroomFlags>(),
+        RequirementType.RaceRequirement     => FlagsFromEnum<MedalFlags>(),
+        _ => new(),
+    };
+
+    private static List<(string Label, long Bit)> FlagsFromEnum<T>() where T : struct, Enum =>
+        Enum.GetValues<T>()
+            .Where(f => Convert.ToInt64(f) != 0)
+            .Select(f => (FormatName(f.ToString()), Convert.ToInt64(f)))
+            .ToList();
+}
