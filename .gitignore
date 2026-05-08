@@ -44,6 +44,10 @@ ipch/
 *.db
 ChaoMission/Release
 
+# C.H.A.O. Mission Creator build output
+C.H.A.O. Mission Creator/bin/
+C.H.A.O. Mission Creator/obj/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\C.H.A.O. Mission Creator.props" />
-</Project>
