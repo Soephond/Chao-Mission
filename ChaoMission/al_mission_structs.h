@@ -288,9 +288,53 @@ struct ChaoMissions
 
 inline void free_or_checks(const ValueCheckPoint& point)
 {
+	free(point.Checks);
 	if(point.OrCheck != nullptr)
 	{
 		free_or_checks(*point.OrCheck);
 		free(point.OrCheck);
+	}
+}
+
+inline void free_mission_requirements(const MissionRequirements& reqs)
+{
+	for (int i = 0; i < reqs.Amount; i++)
+	{
+		free((void*)reqs.Requirements[i].RequirementDescription);
+		free_or_checks(reqs.Requirements[i].CheckList);
+	}
+	free(reqs.Requirements);
+}
+
+inline void free_mission_rewards(const MissionRewards& rewards)
+{
+	for (int i = 0; i < rewards.Amount; i++)
+	{
+		free((void*)rewards.Rewards[i].RewardDescription);
+	}
+	free(rewards.Rewards);
+}
+
+inline void FreeChaoMission(ChaoMission& mission)
+{
+	free((void*)mission.Name);
+	for (int i = 0; i < mission.Description.AmountOfLines; i++)
+		free((void*)mission.Description.Lines[i]);
+	free(mission.Description.Lines);
+
+	free_mission_requirements(mission.Requirements);
+	free_mission_rewards(mission.Rewards);
+
+	if (mission.BonusRequirements != nullptr)
+	{
+		free_mission_requirements(*mission.BonusRequirements);
+		free(mission.BonusRequirements);
+		mission.BonusRequirements = nullptr;
+	}
+	if (mission.BonusRewards != nullptr)
+	{
+		free_mission_rewards(*mission.BonusRewards);
+		free(mission.BonusRewards);
+		mission.BonusRewards = nullptr;
 	}
 }
