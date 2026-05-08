@@ -351,56 +351,7 @@ void UnloadMissions()
 {
     for (int i = 0; i < missions.Amount; i++)
     {
-        auto mission = &missions.MissionList[i];
-
-        for (int j = 0; j < mission->Description.AmountOfLines; j++)
-        {
-            auto line = mission->Description.Lines[j];
-
-            free(const_cast<char*>(line));
-        }
-
-        for (int j = 0; j < mission->Requirements.Amount; j++)
-        {
-            auto requirement = &mission->Requirements.Requirements[j];
-
-            free(const_cast<char*>(requirement->RequirementDescription));
-            free(requirement->CheckList.Checks);
-            free_or_checks(requirement->CheckList);
-        }
-
-        for (int j = 0; j < mission->Rewards.Amount; j++)
-        {
-            auto reward = &mission->Rewards.Rewards[j];
-
-            free(const_cast<char*>(reward->RewardDescription));
-        }
-
-        if (mission->BonusRequirements)
-        {
-            for (int j = 0; j < mission->BonusRequirements->Amount; j++)
-            {
-                auto requirement = &mission->BonusRequirements->Requirements[j];
-
-                free(const_cast<char*>(requirement->RequirementDescription));
-                free(requirement->CheckList.Checks);
-                free_or_checks(requirement->CheckList);
-            }
-        }
-
-        if (mission->BonusRewards)
-        {
-            for (int j = 0; j < mission->BonusRewards->Amount; j++)
-            {
-                auto reward = &mission->Rewards.Rewards[j];
-
-                free(const_cast<char*>(reward->RewardDescription));
-            }
-        }
-
-        free(const_cast<char*>(mission->Name));
-        free(mission->BonusRequirements);
-        free(mission->BonusRewards);
+        FreeChaoMission(missions.MissionList[i]);
     }
 
     missions.Amount = 0;
