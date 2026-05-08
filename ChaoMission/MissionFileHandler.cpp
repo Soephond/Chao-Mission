@@ -172,7 +172,8 @@ bool IsValidMission(std::filesystem::path missionFile)
 			return false;
 		}
 		
-		LoadChaoMissionFromJson(jsonData);
+		ChaoMission mission = LoadChaoMissionFromJson(jsonData);
+		FreeChaoMission(mission);
 	}
 	catch (...)
 	{

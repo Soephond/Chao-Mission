@@ -83,6 +83,7 @@ struct GetEnumHelper<T, true> {
 				return false;
 			}
 
+			std::cout << "Value String: " << valueJson.GetString() << std::endl;
 			value = readValue.value();
 			return true;
 		}
@@ -749,7 +750,7 @@ bool HandleBondRequirementValueCheck(jsonValue& checkJson, ValueCheck* check)
 	return false;
 }
 
-ValueCheckHandleFunc GetHandleFunc(REQUIREMENT_TYPE& type)
+ValueCheckHandleFunc GetHandleFunc(const REQUIREMENT_TYPE type)
 {
 	switch (type)
 	{
@@ -820,14 +821,13 @@ bool GetRewards(jsonValue& rewardsJson, MissionRewards& rewards)
 	int i = 0;
 
 	for (auto& reward : rewardsJson.GetArray()) {
-		MissionReward* newReward = new MissionReward();
-		if (GetReward(reward, newReward)) {
-			rewardsVector.push_back(*newReward);
-			++i;
-		}
-		else {
+		MissionReward rewardValue{};
+		MissionReward* newReward = &rewardValue;
+		if (!GetReward(reward, newReward)) {
 			return false;
 		}
+		rewardsVector.push_back(*newReward);
+		++i;
 	}
 	
 	rewards.Amount = (int)rewardsVector.size();
@@ -854,7 +854,7 @@ bool GetCheck(ValueCheckHandleFunc& handlerFunc, jsonValue& checkJson, ValueChec
 	return true;
 }
 
-bool GetRequirementChecksFromJson(REQUIREMENT_TYPE& baseType, jsonValue& checksJson, ValueCheckPoint* checkPoint)
+bool GetRequirementChecksFromJson(REQUIREMENT_TYPE baseType, jsonValue& checksJson, ValueCheckPoint* checkPoint)
 {
 	if (checksJson.IsNull()) {
 		return false;
@@ -864,7 +864,8 @@ bool GetRequirementChecksFromJson(REQUIREMENT_TYPE& baseType, jsonValue& checksJ
 	int i = 0;
 
 	for (auto& check : checksJson.GetArray()) {
-		ValueCheck* newCheck;
+		ValueCheck checkValue{};
+		ValueCheck* newCheck = &checkValue;
 		ValueCheckHandleFunc handlerFunc = GetHandleFunc(baseType);
 		if (handlerFunc == nullptr)
 		{
@@ -892,7 +893,7 @@ bool GetRequirementChecksFromJson(REQUIREMENT_TYPE& baseType, jsonValue& checksJ
 	return true;
 }
 
-bool GetMissionRequirementFromJson(jsonValue& requirementJson, MissionRequirement* requirement)
+bool GetMissionRequirementFromJson(jsonValue& requirementJson, MissionRequirement*& requirement)
 {
 	if (!(requirementJson.HasMember("Type") && requirementJson.HasMember("Description") && requirementJson.HasMember("Checks"))) {
 		return false;
@@ -952,14 +953,13 @@ bool GetMissionRequirementsFromJson(jsonValue& requirementsJson, MissionRequirem
 	int i = 0;
 
 	for (auto& requirement : requirementsJson.GetArray()) {
-		MissionRequirement newRequirement;
-		if (GetMissionRequirementFromJson(requirement, &newRequirement)) {
-			requirementsVector.push_back(newRequirement);
-			++i;
-		}
-		else {
+		MissionRequirement reqValue{};
+		MissionRequirement* newRequirement = &reqValue;
+		if (!GetMissionRequirementFromJson(requirement, newRequirement)) {
 			return false;
 		}
+		requirementsVector.push_back(*newRequirement);
+		++i;
 	}
 	
 	requirements.Amount = (int)requirementsVector.size();
@@ -1014,12 +1014,14 @@ ChaoMission LoadChaoMissionFromJson(jsonDocument& missionJson) {
 std::string GetMissionNameFromJson(jsonValue& missionJson)
 {
 	const char* result;
-	
+
 	if (!GetMissionName(missionJson, result))
 	{
 		std::cout << "Mission does not contain a name" << std::endl;
 		throw std::runtime_error("Mission does not contain a name");
 	}
 
-	return result;
+	std::string name = result;
+	free((void*)result);
+	return name;
 }
