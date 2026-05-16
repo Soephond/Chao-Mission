@@ -743,7 +743,14 @@ void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
             Load_Controls();
             AlMsgWarnCreate(93, 126.5, 450, 270.0);
             AlMsgWarnOpen();
-            AL_OdeMenuSetMode(0, 0x1);
+            if (MissionCount > 0)
+            {
+                AL_OdeMenuSetMode(0, 0x1);
+            }
+            else
+            {
+                AL_OdeMenuSetMode(0, 0x11);
+            }
             break;
         case 0x1:
             Load_Mission_Text(0, false);
@@ -924,6 +931,25 @@ void Handle_Mission_Menu(ODE_MENU_MASTER_WORK* OdeMenuMasterWork)
                 AL_Change_Chao_Area(LastChaoArea);
             }
             goto LABEL_RETURN;
+        // Load Text for No Mission
+        case 0x11:
+            AlMsgWinAddLineC(Al_MSGWarnKinderMessageArray[0].pkindercomessagething14, "There are no Missions available. Be sure to come back later when there are missions available",
+                             TextLanguage == 0);
+            AL_OdeMenuSetMode(0, 0x12);
+            break;    
+        // Empty Mission Screen
+        case 0x12:
+            if (Al_MSGWarnKinderMessageArray[0].pkindercomessagething14->wordsLeftMaybe > 0)
+            {
+                goto LABEL_RETURN;
+            }
+            press = ControllerPointers[0]->press;
+            if ((press & (Buttons_B | Buttons_A)) != 0)
+            {
+                AL_OdeMenuSetMode(0, 0x3);
+                AL_OdekakeMenuMaster_Data_ptr->EndFlag = 1;
+            }
+            break;
         default:
         LABEL_RETURN:
             dword_1A557C8 = 0;
