@@ -572,7 +572,7 @@ void Display_Mission_Arrows(ObjectMaster* a1)
     }
     else
     {
-        //Draw if no previous or next mission
+        //Draw if no previous and next mission
         SetChaoHUDThingBColor(0.3f, 1, 1, 1);
         DrawChaoHudThingB(&MissionMenu[5], 70, 305, 100, 1, 1, 1, 1); //lower opacity
         DrawChaoHudThingB(&MissionMenu[6], 620, 305, 100, 1, 1, 1, 1); //lower opacity
