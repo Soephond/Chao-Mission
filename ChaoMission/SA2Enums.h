@@ -597,7 +597,7 @@ enum SADXChaoArea : __int8
 	SADXChaoArea_BlackMarket = 0x7,
 };
 
-enum SA2BChaoGarden : __int8
+enum SA2BChaoGarden : __int16
 {
 	SA2BChaoGarden_None = -1,
 	SA2BChaoGarden_ChaoGarden = 0x1,
@@ -1263,7 +1263,7 @@ enum SA2BHat : __int8
 
 enum ChaoSeed : __int8
 {
-	ChaoSeed_None = -1,
+	ChaoSeed_None = 0xFF,
 	ChaoSeed_StrongSeed = 0x0,
 	ChaoSeed_TastySeed = 0x1,
 	ChaoSeed_HeroSeed = 0x2,
